@@ -1,6 +1,6 @@
 # macSCP
 
-macSCP is a software which allows store the details of your remote server and connect to it securely.
+macSCP is software that allows storing the details of your remote server and connect to it securely.
 A great alternative to Putty and WinSCP for MacOS.
 
 Written in Swiftui to bring power and perfomance of MacOS native framework.

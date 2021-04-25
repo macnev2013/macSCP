@@ -1,0 +1,407 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6D1CFE972634993A0026D2FF /* macSCPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFE962634993A0026D2FF /* macSCPApp.swift */; };
+		6D1CFE992634993A0026D2FF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFE982634993A0026D2FF /* ContentView.swift */; };
+		6D1CFE9B2634993B0026D2FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1CFE9A2634993B0026D2FF /* Assets.xcassets */; };
+		6D1CFE9E2634993B0026D2FF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1CFE9D2634993B0026D2FF /* Preview Assets.xcassets */; };
+		6D1CFEAB263499AC0026D2FF /* macSCP.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEA9263499AC0026D2FF /* macSCP.xcdatamodeld */; };
+		6D1CFEAE26349A3A0026D2FF /* PersistanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEAD26349A3A0026D2FF /* PersistanceController.swift */; };
+		6D1CFEB126349BE70026D2FF /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB026349BE70026D2FF /* SidebarView.swift */; };
+		6D1CFEB426349D0C0026D2FF /* ConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB326349D0C0026D2FF /* ConnectionView.swift */; };
+		6D1CFEB82634A1790026D2FF /* ConnectionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB72634A1790026D2FF /* ConnectionRow.swift */; };
+		6D1CFEBB2634A3830026D2FF /* ConnectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEBA2634A3830026D2FF /* ConnectionDetailView.swift */; };
+		6D1CFEBE2634AA700026D2FF /* ConnectionAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEBD2634AA700026D2FF /* ConnectionAddView.swift */; };
+		6D1CFEC12634AB4C0026D2FF /* CommonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEC02634AB4C0026D2FF /* CommonStyles.swift */; };
+		6D1CFEC52634B2A10026D2FF /* SSHConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6D1CFE932634993A0026D2FF /* macSCP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macSCP.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D1CFE962634993A0026D2FF /* macSCPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macSCPApp.swift; sourceTree = "<group>"; };
+		6D1CFE982634993A0026D2FF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6D1CFE9A2634993B0026D2FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6D1CFE9D2634993B0026D2FF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		6D1CFE9F2634993B0026D2FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6D1CFEA02634993B0026D2FF /* macSCP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macSCP.entitlements; sourceTree = "<group>"; };
+		6D1CFEAA263499AC0026D2FF /* macSCP.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = macSCP.xcdatamodel; sourceTree = "<group>"; };
+		6D1CFEAD26349A3A0026D2FF /* PersistanceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceController.swift; sourceTree = "<group>"; };
+		6D1CFEB026349BE70026D2FF /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		6D1CFEB326349D0C0026D2FF /* ConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionView.swift; sourceTree = "<group>"; };
+		6D1CFEB72634A1790026D2FF /* ConnectionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRow.swift; sourceTree = "<group>"; };
+		6D1CFEBA2634A3830026D2FF /* ConnectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDetailView.swift; sourceTree = "<group>"; };
+		6D1CFEBD2634AA700026D2FF /* ConnectionAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionAddView.swift; sourceTree = "<group>"; };
+		6D1CFEC02634AB4C0026D2FF /* CommonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonStyles.swift; sourceTree = "<group>"; };
+		6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHConnectionController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6D1CFE902634993A0026D2FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6D1CFE8A2634993A0026D2FF = {
+			isa = PBXGroup;
+			children = (
+				6D1CFE952634993A0026D2FF /* macSCP */,
+				6D1CFE942634993A0026D2FF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6D1CFE942634993A0026D2FF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D1CFE932634993A0026D2FF /* macSCP.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6D1CFE952634993A0026D2FF /* macSCP */ = {
+			isa = PBXGroup;
+			children = (
+				6D1CFEC32634B28E0026D2FF /* Controller */,
+				6D1CFEA8263499910026D2FF /* View */,
+				6D1CFEA7263499780026D2FF /* Model */,
+				6D1CFE962634993A0026D2FF /* macSCPApp.swift */,
+				6D1CFE982634993A0026D2FF /* ContentView.swift */,
+				6D1CFE9A2634993B0026D2FF /* Assets.xcassets */,
+				6D1CFE9F2634993B0026D2FF /* Info.plist */,
+				6D1CFEA02634993B0026D2FF /* macSCP.entitlements */,
+				6D1CFE9C2634993B0026D2FF /* Preview Content */,
+			);
+			path = macSCP;
+			sourceTree = "<group>";
+		};
+		6D1CFE9C2634993B0026D2FF /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				6D1CFE9D2634993B0026D2FF /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		6D1CFEA7263499780026D2FF /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6D1CFEA9263499AC0026D2FF /* macSCP.xcdatamodeld */,
+				6D1CFEAD26349A3A0026D2FF /* PersistanceController.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6D1CFEA8263499910026D2FF /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6D1CFEB026349BE70026D2FF /* SidebarView.swift */,
+				6D1CFEB326349D0C0026D2FF /* ConnectionView.swift */,
+				6D1CFEB72634A1790026D2FF /* ConnectionRow.swift */,
+				6D1CFEBA2634A3830026D2FF /* ConnectionDetailView.swift */,
+				6D1CFEBD2634AA700026D2FF /* ConnectionAddView.swift */,
+				6D1CFEC02634AB4C0026D2FF /* CommonStyles.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6D1CFEC32634B28E0026D2FF /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6D1CFE922634993A0026D2FF /* macSCP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6D1CFEA32634993B0026D2FF /* Build configuration list for PBXNativeTarget "macSCP" */;
+			buildPhases = (
+				6D1CFE8F2634993A0026D2FF /* Sources */,
+				6D1CFE902634993A0026D2FF /* Frameworks */,
+				6D1CFE912634993A0026D2FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = macSCP;
+			productName = macSCP;
+			productReference = 6D1CFE932634993A0026D2FF /* macSCP.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6D1CFE8B2634993A0026D2FF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1240;
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					6D1CFE922634993A0026D2FF = {
+						CreatedOnToolsVersion = 12.4;
+					};
+				};
+			};
+			buildConfigurationList = 6D1CFE8E2634993A0026D2FF /* Build configuration list for PBXProject "macSCP" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6D1CFE8A2634993A0026D2FF;
+			productRefGroup = 6D1CFE942634993A0026D2FF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6D1CFE922634993A0026D2FF /* macSCP */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6D1CFE912634993A0026D2FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D1CFE9E2634993B0026D2FF /* Preview Assets.xcassets in Resources */,
+				6D1CFE9B2634993B0026D2FF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6D1CFE8F2634993A0026D2FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D1CFEC12634AB4C0026D2FF /* CommonStyles.swift in Sources */,
+				6D1CFEAB263499AC0026D2FF /* macSCP.xcdatamodeld in Sources */,
+				6D1CFEBE2634AA700026D2FF /* ConnectionAddView.swift in Sources */,
+				6D1CFEB82634A1790026D2FF /* ConnectionRow.swift in Sources */,
+				6D1CFE992634993A0026D2FF /* ContentView.swift in Sources */,
+				6D1CFEBB2634A3830026D2FF /* ConnectionDetailView.swift in Sources */,
+				6D1CFEC52634B2A10026D2FF /* SSHConnectionController.swift in Sources */,
+				6D1CFEB126349BE70026D2FF /* SidebarView.swift in Sources */,
+				6D1CFE972634993A0026D2FF /* macSCPApp.swift in Sources */,
+				6D1CFEB426349D0C0026D2FF /* ConnectionView.swift in Sources */,
+				6D1CFEAE26349A3A0026D2FF /* PersistanceController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6D1CFEA12634993B0026D2FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		6D1CFEA22634993B0026D2FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		6D1CFEA42634993B0026D2FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = macSCP/macSCP.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"macSCP/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = macSCP/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = macSCP.macSCP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6D1CFEA52634993B0026D2FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = macSCP/macSCP.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"macSCP/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = macSCP/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = macSCP.macSCP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6D1CFE8E2634993A0026D2FF /* Build configuration list for PBXProject "macSCP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D1CFEA12634993B0026D2FF /* Debug */,
+				6D1CFEA22634993B0026D2FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6D1CFEA32634993B0026D2FF /* Build configuration list for PBXNativeTarget "macSCP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D1CFEA42634993B0026D2FF /* Debug */,
+				6D1CFEA52634993B0026D2FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		6D1CFEA9263499AC0026D2FF /* macSCP.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6D1CFEAA263499AC0026D2FF /* macSCP.xcdatamodel */,
+			);
+			currentVersion = 6D1CFEAA263499AC0026D2FF /* macSCP.xcdatamodel */;
+			path = macSCP.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 6D1CFE8B2634993A0026D2FF /* Project object */;
+}

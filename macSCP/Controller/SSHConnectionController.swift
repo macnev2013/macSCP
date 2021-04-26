@@ -9,6 +9,7 @@ import Foundation
 
 func SSHConnect(address: String, username: String, password: String, keypath: String, isKey: Bool) {
     var source = ""
+
     if (isKey && !keypath.isEmpty) {
         source = """
             tell application "Terminal"
@@ -19,7 +20,7 @@ func SSHConnect(address: String, username: String, password: String, keypath: St
     if (!isKey && !password.isEmpty){
         source = """
             tell application "Terminal"
-                set currentTab to do script ("ssh \(username):\(password)@\(address);")
+                ßßßset currentTab to do script ("ssh \(username):\(password)@\(address);")
             end tell
         """
     }

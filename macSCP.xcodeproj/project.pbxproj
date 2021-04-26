@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6D1CFE972634993A0026D2FF /* macSCPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFE962634993A0026D2FF /* macSCPApp.swift */; };
-		6D1CFE992634993A0026D2FF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFE982634993A0026D2FF /* ContentView.swift */; };
 		6D1CFE9B2634993B0026D2FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1CFE9A2634993B0026D2FF /* Assets.xcassets */; };
 		6D1CFE9E2634993B0026D2FF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1CFE9D2634993B0026D2FF /* Preview Assets.xcassets */; };
-		6D1CFEAB263499AC0026D2FF /* macSCP.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEA9263499AC0026D2FF /* macSCP.xcdatamodeld */; };
-		6D1CFEAE26349A3A0026D2FF /* PersistanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEAD26349A3A0026D2FF /* PersistanceController.swift */; };
-		6D1CFEB126349BE70026D2FF /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB026349BE70026D2FF /* SidebarView.swift */; };
-		6D1CFEB426349D0C0026D2FF /* ConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB326349D0C0026D2FF /* ConnectionView.swift */; };
-		6D1CFEB82634A1790026D2FF /* ConnectionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB72634A1790026D2FF /* ConnectionRow.swift */; };
-		6D1CFEBB2634A3830026D2FF /* ConnectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEBA2634A3830026D2FF /* ConnectionDetailView.swift */; };
-		6D1CFEBE2634AA700026D2FF /* ConnectionAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEBD2634AA700026D2FF /* ConnectionAddView.swift */; };
-		6D1CFEC12634AB4C0026D2FF /* CommonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEC02634AB4C0026D2FF /* CommonStyles.swift */; };
-		6D1CFEC52634B2A10026D2FF /* SSHConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */; };
+		6D4FB8E02636B783005E959F /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB026349BE70026D2FF /* SidebarView.swift */; };
+		6D4FB8E12636B783005E959F /* ConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB326349D0C0026D2FF /* ConnectionView.swift */; };
+		6D4FB8E22636B783005E959F /* ConnectionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB72634A1790026D2FF /* ConnectionRow.swift */; };
+		6D4FB8E32636B783005E959F /* ConnectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEBA2634A3830026D2FF /* ConnectionDetailView.swift */; };
+		6D4FB8E42636B783005E959F /* ConnectionAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEBD2634AA700026D2FF /* ConnectionAddView.swift */; };
+		6D4FB8E52636B783005E959F /* CommonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEC02634AB4C0026D2FF /* CommonStyles.swift */; };
+		6D4FB8E62636B783005E959F /* PersistanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEAD26349A3A0026D2FF /* PersistanceController.swift */; };
+		6D4FB8E72636B783005E959F /* macSCPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFE962634993A0026D2FF /* macSCPApp.swift */; };
+		6D4FB8E82636B783005E959F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFE982634993A0026D2FF /* ContentView.swift */; };
+		6D4FB8EA2636B78F005E959F /* SSHConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */; };
+		6D4FB8EC2636B796005E959F /* macSCP.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEA9263499AC0026D2FF /* macSCP.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +57,7 @@
 			children = (
 				6D1CFE952634993A0026D2FF /* macSCP */,
 				6D1CFE942634993A0026D2FF /* Products */,
+				6D4FB8C82635C7FB005E959F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -120,6 +121,13 @@
 				6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		6D4FB8C82635C7FB005E959F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -191,17 +199,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D1CFEC12634AB4C0026D2FF /* CommonStyles.swift in Sources */,
-				6D1CFEAB263499AC0026D2FF /* macSCP.xcdatamodeld in Sources */,
-				6D1CFEBE2634AA700026D2FF /* ConnectionAddView.swift in Sources */,
-				6D1CFEB82634A1790026D2FF /* ConnectionRow.swift in Sources */,
-				6D1CFE992634993A0026D2FF /* ContentView.swift in Sources */,
-				6D1CFEBB2634A3830026D2FF /* ConnectionDetailView.swift in Sources */,
-				6D1CFEC52634B2A10026D2FF /* SSHConnectionController.swift in Sources */,
-				6D1CFEB126349BE70026D2FF /* SidebarView.swift in Sources */,
-				6D1CFE972634993A0026D2FF /* macSCPApp.swift in Sources */,
-				6D1CFEB426349D0C0026D2FF /* ConnectionView.swift in Sources */,
-				6D1CFEAE26349A3A0026D2FF /* PersistanceController.swift in Sources */,
+				6D4FB8EC2636B796005E959F /* macSCP.xcdatamodeld in Sources */,
+				6D4FB8EA2636B78F005E959F /* SSHConnectionController.swift in Sources */,
+				6D4FB8E02636B783005E959F /* SidebarView.swift in Sources */,
+				6D4FB8E12636B783005E959F /* ConnectionView.swift in Sources */,
+				6D4FB8E22636B783005E959F /* ConnectionRow.swift in Sources */,
+				6D4FB8E32636B783005E959F /* ConnectionDetailView.swift in Sources */,
+				6D4FB8E42636B783005E959F /* ConnectionAddView.swift in Sources */,
+				6D4FB8E52636B783005E959F /* CommonStyles.swift in Sources */,
+				6D4FB8E62636B783005E959F /* PersistanceController.swift in Sources */,
+				6D4FB8E72636B783005E959F /* macSCPApp.swift in Sources */,
+				6D4FB8E82636B783005E959F /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,10 +341,18 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"macSCP/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = macSCP/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = macSCP.macSCP;
@@ -355,10 +371,18 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"macSCP/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = macSCP/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = macSCP.macSCP;

@@ -28,6 +28,7 @@ struct ConnectionRow: View {
                 Image(systemName: "play")
             })
             .buttonStyle(PlainButtonStyle())
+            
         }
         .padding(5)
     }

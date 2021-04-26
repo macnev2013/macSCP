@@ -22,7 +22,6 @@ struct ConnectionDetailView: View {
                 .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                 .bold()
                 .foregroundColor(.accentColor)
-            Spacer()
             VStack() {
                 HStack {
                     Text("Address:")
@@ -51,7 +50,6 @@ struct ConnectionDetailView: View {
                             .connectionViewTextField()
                     }
                 }
-                Spacer(minLength: 20)
                 HStack {
                     Button("Save") {
                     }
@@ -65,6 +63,7 @@ struct ConnectionDetailView: View {
                 Image(systemName: "square.and.arrow.up")
             }
         }
+        Spacer()
     }
 }
 

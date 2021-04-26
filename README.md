@@ -8,7 +8,7 @@ Beautifully desinged to make it easy on eyes.
 
 # Preview
 ![Main Screen](/Preview/main_screen.png?raw=true "Main Screen")
-![Add a new connection](/Preview/add_new_connection?raw=true "Add a new connection")
+![Add a new connection](/Preview/add_new_connection.png?raw=true "Add a new connection")
 
 # Note
 

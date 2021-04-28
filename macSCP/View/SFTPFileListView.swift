@@ -10,8 +10,11 @@ import NMSSH
 
 struct SFTPFileListView: View {
     @Environment(\.colorScheme) var colorScheme
+
     var session: NMSSHSession
     var queue = DispatchQueue(label: "listFiles")
+    
+    @State var sftpSession: NMSFTP?
     @State var selectedItem: NMSFTPFile?
     @State var directories: [NMSFTPFile] = []
     @State var currentPath = "/"
@@ -22,15 +25,15 @@ struct SFTPFileListView: View {
     
     func updateDirectoryList () {
         self.queue.async {
-            directories = getFileList(session: session, dir: currentPath)
+            directories = getFileList(session: sftpSession!, dir: currentPath)
         }
     }
-    
+
     var backButton: some View {
         Button(action: {
             if pathHistory.count > 0 {
                 currentPath = pathHistory.popLast() ?? ""
-                directories = getFileList(session: session, dir: currentPath)
+                updateDirectoryList()
             }
         }) {
             Image(systemName: "chevron.left")
@@ -50,7 +53,7 @@ struct SFTPFileListView: View {
             let selectedFilename = self.selectedItem?.filename ?? ""
             if !selectedFilename.isEmpty {
                 let pathToDelete = currentPath + selectedFilename
-                deleteDirectoy(session: session, atPath: pathToDelete)
+                deleteDirectoy(session: sftpSession!, atPath: pathToDelete)
                 updateDirectoryList()
             }
         }, label: {
@@ -106,8 +109,7 @@ struct SFTPFileListView: View {
     
     
     var body: some View {
-        
-        
+
         VStack {
             HStack {
                 Picker(selection: $routeToPath, label: Text("Directory:")) {
@@ -148,6 +150,7 @@ struct SFTPFileListView: View {
             }))
             .frame(minWidth: 30, idealWidth: 30, maxWidth: .infinity)
             .onAppear {
+                self.sftpSession = createSFTPSession(session: session)
                 if !pathHistory.contains(currentPath) {
                     pathHistory.append(currentPath)
                 }
@@ -164,7 +167,7 @@ struct SFTPFileListView: View {
                     } label: {
                          Image(systemName: "ellipsis.circle")
                     }
-                    .sheet(isPresented: $showingCreateNewFolderSheet) { CreateNewDirectoryView(session: session, directory: currentPath) }
+                    .sheet(isPresented: $showingCreateNewFolderSheet) { CreateNewDirectoryView(sftpSession: self.sftpSession!, directory: currentPath) }
                 }
             }
         }

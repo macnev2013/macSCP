@@ -9,10 +9,10 @@ import SwiftUI
 import NMSSH
 
 struct CreateNewDirectoryView: View {
-    @Environment(\.presentationMode) var presentationMode
-
-    var session: NMSSHSession
+    var sftpSession: NMSFTP
     var directory: String
+
+    @Environment(\.presentationMode) var presentationMode
 
     @State private var directoryName = ""
 
@@ -33,7 +33,7 @@ struct CreateNewDirectoryView: View {
                 Button("Save") {
                     directoryName = directory + directoryName
                     print("Making directroy: \(directoryName)")
-                    makeDirectoy(session: session, atPath: directoryName)
+                    makeDirectoy(session: sftpSession, atPath: directoryName)
                     presentationMode.wrappedValue.dismiss()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -45,11 +45,5 @@ struct CreateNewDirectoryView: View {
         }
         .padding()
         .frame(minWidth: 400, idealWidth: 400, maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, minHeight: 200, idealHeight: 200, maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
-    }
-}
-
-struct CreateNewDirectoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        CreateNewDirectoryView(session: NMSSHSession(host: "", andUsername: ""), directory: "")
     }
 }

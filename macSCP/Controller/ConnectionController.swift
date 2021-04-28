@@ -29,21 +29,22 @@ func createSession(address:String, username:String, password:String, keypath:Str
     return session
 }
 
-func executeCommand(session: NMSSHSession, command: String) -> String {
-    let error: NSErrorPointer = nil
-    return session.channel.execute(command, error: error)
-}
-
-func getFileList(session: NMSSHSession, dir: String) -> [NMSFTPFile] {
+func createSFTPSession(session: NMSSHSession) -> NMSFTP {
     if !session.isConnected {
         session.connect()
     }
     let sftp =  NMSFTP(session: session)
     sftp.connect()
-    return sftp.contentsOfDirectory(atPath: dir) ?? []
+    return sftp
 }
 
-func deleteFile(session: NMSSHSession, pathToDelete: String) {
+func executeCommand(session: NMSSHSession, command: String) -> String {
+    let error: NSErrorPointer = nil
+    return session.channel.execute(command, error: error)
+}
+
+func getFileList(session: NMSFTP, dir: String) -> [NMSFTPFile] {
+    return session.contentsOfDirectory(atPath: dir) ?? []
 }
 
 func downloadFile(session: NMSSHSession, pathToDownload: String, downloadDirectory: String) {
@@ -55,20 +56,10 @@ func downloadFile(session: NMSSHSession, pathToDownload: String, downloadDirecto
 //    sftp.copyContents(ofPath: <#T##String#>, toFileAtPath: <#T##String#>, progress: <#T##((UInt, UInt) -> Bool)?##((UInt, UInt) -> Bool)?##(UInt, UInt) -> Bool#>)
 }
 
-func makeDirectoy(session: NMSSHSession, atPath: String) {
-    if !session.isConnected {
-        session.connect()
-    }
-    let sftp = NMSFTP(session: session)
-    sftp.connect()
-    sftp.createDirectory(atPath: atPath)
+func makeDirectoy(session: NMSFTP, atPath: String) {
+    session.createDirectory(atPath: atPath)
 }
 
-func deleteDirectoy(session: NMSSHSession, atPath: String) {
-    if !session.isConnected {
-        session.connect()
-    }
-    let sftp = NMSFTP(session: session)
-    sftp.connect()
-    sftp.removeDirectory(atPath: atPath)
+func deleteDirectoy(session: NMSFTP, atPath: String) {
+    session.removeDirectory(atPath: atPath)
 }

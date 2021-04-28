@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D0A0CEC26388CD500F226D2 /* CreateNewDirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A0CEB26388CD500F226D2 /* CreateNewDirectoryView.swift */; };
 		6D1CFE9B2634993B0026D2FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1CFE9A2634993B0026D2FF /* Assets.xcassets */; };
 		6D1CFE9E2634993B0026D2FF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1CFE9D2634993B0026D2FF /* Preview Assets.xcassets */; };
 		6D4FB8E02636B783005E959F /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEB026349BE70026D2FF /* SidebarView.swift */; };
@@ -20,9 +21,17 @@
 		6D4FB8E82636B783005E959F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFE982634993A0026D2FF /* ContentView.swift */; };
 		6D4FB8EA2636B78F005E959F /* SSHConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */; };
 		6D4FB8EC2636B796005E959F /* macSCP.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6D1CFEA9263499AC0026D2FF /* macSCP.xcdatamodeld */; };
+		6DDD7C612637283B004194FA /* ConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDD7C602637283B004194FA /* ConnectionController.swift */; };
+		6DDD7C6426372C06004194FA /* SFTPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDD7C6326372C06004194FA /* SFTPView.swift */; };
+		6DDD7C67263741D5004194FA /* SFTPFileListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDD7C66263741D5004194FA /* SFTPFileListView.swift */; };
+		6DDD7C6A2637434C004194FA /* ConnectionDirView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDD7C692637434C004194FA /* ConnectionDirView.swift */; };
+		AF96A51EA4A67398A7152CA8 /* Pods_macSCP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 746BE7C258355FF5E467987D /* Pods_macSCP.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		26230189013E425EE91FAAA7 /* Pods-macSCP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macSCP.release.xcconfig"; path = "Target Support Files/Pods-macSCP/Pods-macSCP.release.xcconfig"; sourceTree = "<group>"; };
+		62427CA73587F9020046C8DC /* Pods-macSCP.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macSCP.debug.xcconfig"; path = "Target Support Files/Pods-macSCP/Pods-macSCP.debug.xcconfig"; sourceTree = "<group>"; };
+		6D0A0CEB26388CD500F226D2 /* CreateNewDirectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewDirectoryView.swift; sourceTree = "<group>"; };
 		6D1CFE932634993A0026D2FF /* macSCP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macSCP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D1CFE962634993A0026D2FF /* macSCPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macSCPApp.swift; sourceTree = "<group>"; };
 		6D1CFE982634993A0026D2FF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -39,6 +48,11 @@
 		6D1CFEBD2634AA700026D2FF /* ConnectionAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionAddView.swift; sourceTree = "<group>"; };
 		6D1CFEC02634AB4C0026D2FF /* CommonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonStyles.swift; sourceTree = "<group>"; };
 		6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHConnectionController.swift; sourceTree = "<group>"; };
+		6DDD7C602637283B004194FA /* ConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionController.swift; sourceTree = "<group>"; };
+		6DDD7C6326372C06004194FA /* SFTPView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFTPView.swift; sourceTree = "<group>"; };
+		6DDD7C66263741D5004194FA /* SFTPFileListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFTPFileListView.swift; sourceTree = "<group>"; };
+		6DDD7C692637434C004194FA /* ConnectionDirView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDirView.swift; sourceTree = "<group>"; };
+		746BE7C258355FF5E467987D /* Pods_macSCP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_macSCP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,18 +60,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF96A51EA4A67398A7152CA8 /* Pods_macSCP.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3091E6AEFE72D006C19F6D07 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				62427CA73587F9020046C8DC /* Pods-macSCP.debug.xcconfig */,
+				26230189013E425EE91FAAA7 /* Pods-macSCP.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		6D1CFE8A2634993A0026D2FF = {
 			isa = PBXGroup;
 			children = (
 				6D1CFE952634993A0026D2FF /* macSCP */,
 				6D1CFE942634993A0026D2FF /* Products */,
 				6D4FB8C82635C7FB005E959F /* Frameworks */,
+				3091E6AEFE72D006C19F6D07 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,6 +136,10 @@
 				6D1CFEBA2634A3830026D2FF /* ConnectionDetailView.swift */,
 				6D1CFEBD2634AA700026D2FF /* ConnectionAddView.swift */,
 				6D1CFEC02634AB4C0026D2FF /* CommonStyles.swift */,
+				6DDD7C6326372C06004194FA /* SFTPView.swift */,
+				6DDD7C66263741D5004194FA /* SFTPFileListView.swift */,
+				6DDD7C692637434C004194FA /* ConnectionDirView.swift */,
+				6D0A0CEB26388CD500F226D2 /* CreateNewDirectoryView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -119,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				6D1CFEC42634B2A10026D2FF /* SSHConnectionController.swift */,
+				6DDD7C602637283B004194FA /* ConnectionController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -126,6 +156,7 @@
 		6D4FB8C82635C7FB005E959F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				746BE7C258355FF5E467987D /* Pods_macSCP.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -137,9 +168,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6D1CFEA32634993B0026D2FF /* Build configuration list for PBXNativeTarget "macSCP" */;
 			buildPhases = (
+				3B7C4C64FAC2D9817EF26CE7 /* [CP] Check Pods Manifest.lock */,
 				6D1CFE8F2634993A0026D2FF /* Sources */,
 				6D1CFE902634993A0026D2FF /* Frameworks */,
 				6D1CFE912634993A0026D2FF /* Resources */,
+				C1798881E9D52D381E80C93A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -194,13 +227,59 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		3B7C4C64FAC2D9817EF26CE7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-macSCP-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C1798881E9D52D381E80C93A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-macSCP/Pods-macSCP-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-macSCP/Pods-macSCP-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-macSCP/Pods-macSCP-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6D1CFE8F2634993A0026D2FF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6D4FB8EC2636B796005E959F /* macSCP.xcdatamodeld in Sources */,
+				6DDD7C612637283B004194FA /* ConnectionController.swift in Sources */,
 				6D4FB8EA2636B78F005E959F /* SSHConnectionController.swift in Sources */,
+				6DDD7C6A2637434C004194FA /* ConnectionDirView.swift in Sources */,
+				6DDD7C6426372C06004194FA /* SFTPView.swift in Sources */,
+				6D0A0CEC26388CD500F226D2 /* CreateNewDirectoryView.swift in Sources */,
 				6D4FB8E02636B783005E959F /* SidebarView.swift in Sources */,
 				6D4FB8E12636B783005E959F /* ConnectionView.swift in Sources */,
 				6D4FB8E22636B783005E959F /* ConnectionRow.swift in Sources */,
@@ -210,6 +289,7 @@
 				6D4FB8E62636B783005E959F /* PersistanceController.swift in Sources */,
 				6D4FB8E72636B783005E959F /* macSCPApp.swift in Sources */,
 				6D4FB8E82636B783005E959F /* ContentView.swift in Sources */,
+				6DDD7C67263741D5004194FA /* SFTPFileListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,6 +413,7 @@
 		};
 		6D1CFEA42634993B0026D2FF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 62427CA73587F9020046C8DC /* Pods-macSCP.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -363,6 +444,7 @@
 		};
 		6D1CFEA52634993B0026D2FF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26230189013E425EE91FAAA7 /* Pods-macSCP.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

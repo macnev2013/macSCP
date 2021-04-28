@@ -20,8 +20,7 @@ struct ConnectionRow: View {
                 Text(connection.label ?? "")
                     .font(.headline)
                     .lineLimit(1)
-//                Text(connection.address ?? "")
-                Text("192.168.0.1")
+                Text(connection.address ?? "")
             }
             Spacer(minLength: 20)
             Button(action: {

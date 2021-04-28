@@ -19,6 +19,7 @@ struct ConnectionRow: View {
             VStack(alignment: .leading) {
                 Text(connection.label ?? "")
                     .font(.headline)
+                    .lineLimit(1)
                 Text(connection.address ?? "")
             }
             Spacer(minLength: 20)
@@ -28,7 +29,6 @@ struct ConnectionRow: View {
                 Image(systemName: "play")
             })
             .buttonStyle(PlainButtonStyle())
-            
         }
         .padding(5)
     }

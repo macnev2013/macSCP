@@ -26,7 +26,7 @@ struct ConnectionView: View {
     var body: some View {
         List {
             ForEach(self.connections, id: \.self) { (connection: Connections) in
-                NavigationLink(destination: ConnectionDetailView(connection: connection)) {
+                NavigationLink(destination: SFTPView(connection: connection)) {
                     ConnectionRow(connection: connection)
                 }
                 .contextMenu(ContextMenu(menuItems: {

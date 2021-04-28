@@ -6,6 +6,22 @@
 //
 
 import Foundation
+import NMSSH
+
+func NNMSSHTest(address: String, username: String, keypath: String) {
+    let privateKey = try! String(contentsOfFile: keypath)
+    let error: NSErrorPointer = nil
+    let session = NMSSHSession(host: address, andUsername: username)
+    session.connect()
+
+    if session.isConnected == true {
+        session.authenticateBy(inMemoryPublicKey: "", privateKey: privateKey, andPassword: nil)
+        let listOfDir = session.channel.execute("ls -l /var", error: error)
+        print(listOfDir)
+    } else {
+        print("Error in connection")
+    }
+}
 
 func SSHConnect(address: String, username: String, password: String, keypath: String, isKey: Bool) {
     var source = ""

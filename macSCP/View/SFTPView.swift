@@ -14,7 +14,7 @@ struct SFTPView: View {
     
     var body: some View {
         HStack {
-            let session = createSession(address: connection.address ?? "", username: connection.username ?? "", password: connection.password ?? "", keypath: connection.keypath ?? "")
+            let session = createSession(address: connection.address ?? "", username: connection.username ?? "", password: connection.password ?? "", keypath: connection.keypath ?? "", iskey: connection.iskey)
             SFTPFileListView(session: session)
         }
     }

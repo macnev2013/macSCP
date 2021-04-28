@@ -7,8 +7,14 @@ Written in Swiftui to bring power and perfomance of MacOS native framework.
 Beautifully desinged to make it easy on eyes.
 
 # Preview
-![Main Screen](/Preview/main_screen.png?raw=true "Main Screen")
+![File Browser](/Preview/file_browser.png?raw=true "File Browser")
 ![Add a new connection](/Preview/add_new_connection.png?raw=true "Add a new connection")
+![Add a new folder](/Preview/add_new_folder.png?raw=true "Add a new folder")
+
+# Upcoming Features
+- Upload folder
+- Download a folder
+- Edit file without reuploading
 
 # Note
 

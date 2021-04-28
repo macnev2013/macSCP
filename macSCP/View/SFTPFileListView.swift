@@ -9,6 +9,7 @@ import SwiftUI
 import NMSSH
 
 struct SFTPFileListView: View {
+    @Environment(\.colorScheme) var colorScheme
     var session: NMSSHSession
     var queue = DispatchQueue(label: "listFiles")
     @State var selectedItem: NMSFTPFile?
@@ -103,7 +104,10 @@ struct SFTPFileListView: View {
         })
     }
     
+    
     var body: some View {
+        
+        
         VStack {
             HStack {
                 Picker(selection: $routeToPath, label: Text("Directory:")) {
@@ -111,9 +115,12 @@ struct SFTPFileListView: View {
                         Text($0)
                     }
                 }
+                .pickerStyle(MenuPickerStyle())
+                Spacer()
                 self.goButton
             }
             .padding(.horizontal)
+        
             
             List(directories, id: \.self, selection: $selectedItem) { directory in
                 ConnectionDirView(directory: directory)
@@ -150,6 +157,7 @@ struct SFTPFileListView: View {
             .toolbar {
                 ToolbarItemGroup {
                     self.backButton
+                    Spacer()
                     self.refreshButton
                     Menu {
                         self.makeDirectoyButton
@@ -165,6 +173,6 @@ struct SFTPFileListView: View {
 
 struct SFTPFileListView_Previews: PreviewProvider {
     static var previews: some View {
-        SFTPFileListView(session: NMSSHSession(host: "", andUsername: ""), selectedItem: NMSFTPFile(filename: ""))
+        SFTPFileListView(session: NMSSHSession(host: "test", andUsername: "username"), selectedItem: NMSFTPFile(filename: "newfilename"))
     }
 }

@@ -8,38 +8,23 @@
 import Foundation
 import NMSSH
 
-//class ConnectionController {
-//    var session: NMSSHSession
-//    var privateKey: String
-//
-//    init(address:String, username:String, password:String, keypath:String) {
-//        self.privateKey = try! String(contentsOfFile: keypath)
-//        self.session = NMSSHSession(host: address, andUsername: username)
-//        self.session.connect()
-//        if self.session.isConnected == true {
-//            self.session.authenticateBy(inMemoryPublicKey: "", privateKey: privateKey, andPassword: nil)
-//        } else {
-//            print("Error in authenticate!")
-//        }
-//    }
-//
-//    func executeCommand(command: String) -> String {
-//        let error: NSErrorPointer = nil
-//        return self.session.channel.execute(command, error: error)
-//    }
-//}
-
-func createSession(address:String, username:String, password:String, keypath:String) -> NMSSHSession {
-    let privateKey = try! String(contentsOfFile: keypath)
+func createSession(address:String, username:String, password:String, keypath:String, iskey: Bool) -> NMSSHSession {
     let session = NMSSHSession(host: address, andUsername: username)
     session.connect()
-    if session.isConnected == true {
-        session.authenticateBy(inMemoryPublicKey: "", privateKey: privateKey, andPassword: nil)
-        let error: NSErrorPointer = nil
-        //        session.channel.execute("ls -la ~/", error: error)
-        print("Connected to the server succesfully.")
+    if iskey {
+        let privateKey = try! String(contentsOfFile: keypath)
+        if session.isConnected == true {
+            session.authenticateBy(inMemoryPublicKey: "", privateKey: privateKey, andPassword: nil)
+            print("Connected to the server succesfully.")
+        } else {
+            print("Error in authenticate!")
+        }
     } else {
-        print("Error in authenticate!")
+        if session.isConnected == true {
+            session.authenticate(byPassword: password)
+        } else {
+            print("Error in authenticate!")
+        }
     }
     return session
 }
@@ -59,12 +44,6 @@ func getFileList(session: NMSSHSession, dir: String) -> [NMSFTPFile] {
 }
 
 func deleteFile(session: NMSSHSession, pathToDelete: String) {
-//    if !session.isConnected {
-//        session.connect()
-//    }
-//    let sftp =  NMSFTP(session: session)
-//    sftp.connect()
-//    return sftp.contentsOfDirectory(atPath: pathToDelete) ?? []
 }
 
 func downloadFile(session: NMSSHSession, pathToDownload: String, downloadDirectory: String) {

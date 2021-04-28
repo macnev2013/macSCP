@@ -29,18 +29,22 @@ struct CreateNewDirectoryView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
             }
             Spacer()
-            Button("Save") {
-                directoryName = directory + directoryName
-                print("Making directroy: \(directoryName)")
-                makeDirectoy(session: session, atPath: directoryName)
-                presentationMode.wrappedValue.dismiss()
-            }
-            Button("Cancel") {
-                presentationMode.wrappedValue.dismiss()
+            HStack {
+                Button("Save") {
+                    directoryName = directory + directoryName
+                    print("Making directroy: \(directoryName)")
+                    makeDirectoy(session: session, atPath: directoryName)
+                    presentationMode.wrappedValue.dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+                Button("Cancel") {
+                    presentationMode.wrappedValue.dismiss()
+                }
+                .keyboardShortcut(.cancelAction)
             }
         }
         .padding()
-        .frame(minWidth: 400, idealWidth: 400, maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, minHeight: 300, idealHeight: 300, maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
+        .frame(minWidth: 400, idealWidth: 400, maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, minHeight: 200, idealHeight: 200, maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
     }
 }
 

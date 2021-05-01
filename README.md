@@ -6,6 +6,11 @@ A great alternative to Putty and WinSCP for MacOS.
 Written in Swiftui to bring power and perfomance of MacOS native framework.
 Beautifully desinged to make it easy on eyes.
 
+# Support added for
+- Filesystem browsing
+- Creating a new folder
+- Deleting a new folder
+
 # Preview
 ![File Browser](/Preview/file_browser.png?raw=true "File Browser")
 ![Add a new connection](/Preview/add_new_connection.png?raw=true "Add a new connection")

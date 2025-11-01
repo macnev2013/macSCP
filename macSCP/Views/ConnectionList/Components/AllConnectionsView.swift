@@ -49,7 +49,7 @@ struct AllConnectionsView: View {
                 passwordPromptSheet
             }
             .sheet(item: $connectionToEdit) { connection in
-                EditConnectionSheetView(connection: connection)
+                EditSSHConnectionSheetView(connection: connection)
             }
             .sheet(item: $s3ConnectionToEdit) { connection in
                 EditS3ConnectionSheetView(connection: connection)
@@ -105,7 +105,7 @@ struct AllConnectionsView: View {
             selectedConnectionId = connection.id
             selectedConnectionType = .sftp
         }) {
-            ConnectionCardView(
+            SSHConnectionCardView(
                 connection: connection,
                 isSelected: selectedConnectionId == connection.id && selectedConnectionType == .sftp
             )

@@ -49,7 +49,7 @@ struct FolderContentView: View {
                                 selectedConnectionId = connection.id
                                 selectedConnectionType = .sftp
                             }) {
-                                ConnectionCardView(
+                                SSHConnectionCardView(
                                     connection: connection,
                                     isSelected: selectedConnectionId == connection.id && selectedConnectionType == .sftp
                                 )
@@ -175,7 +175,7 @@ struct FolderContentView: View {
             }
         }
         .sheet(item: $connectionToEdit) { connection in
-            EditConnectionSheetView(connection: connection)
+            EditSSHConnectionSheetView(connection: connection)
         }
         .sheet(item: $s3ConnectionToEdit) { connection in
             EditS3ConnectionSheetView(connection: connection)

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ConnectionCardView: View {
+struct SSHConnectionCardView: View {
     let connection: SSHConnection
     let isSelected: Bool
     @State private var isHovered: Bool = false

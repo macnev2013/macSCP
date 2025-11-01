@@ -14,7 +14,7 @@ struct macSCPApp: App {
         do {
             // Try to create the container with auto-migration
             let container = try ModelContainer(
-                for: SSHConnection.self, ConnectionFolder.self,
+                for: SSHConnection.self, ConnectionFolder.self, S3Connection.self,
                 configurations: ModelConfiguration(isStoredInMemoryOnly: false)
             )
             return container
@@ -35,7 +35,7 @@ struct macSCPApp: App {
             // Try again with a clean slate
             do {
                 let container = try ModelContainer(
-                    for: SSHConnection.self, ConnectionFolder.self,
+                    for: SSHConnection.self, ConnectionFolder.self, S3Connection.self,
                     configurations: ModelConfiguration(isStoredInMemoryOnly: false)
                 )
                 return container

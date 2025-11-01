@@ -14,6 +14,7 @@ struct ConnectionListView: View {
 
     @Query private var folders: [ConnectionFolder]
     @Query private var allConnections: [SSHConnection]
+    @Query private var s3Connections: [S3Connection]
 
     enum SidebarSelection: Hashable {
         case all
@@ -23,6 +24,7 @@ struct ConnectionListView: View {
     @State private var selection: SidebarSelection? = .all
     @State private var showingNewFolderSheet = false
     @State private var showingNewConnectionSheet = false
+    @State private var showingNewS3ConnectionSheet = false
     @State private var showingDeleteFolderConfirmation = false
     @State private var folderToDelete: ConnectionFolder?
     @State private var newFolderName = ""
@@ -33,97 +35,149 @@ struct ConnectionListView: View {
 
     var body: some View {
         NavigationSplitView {
-            // Sidebar with folders
-            VStack(spacing: 0) {
-                List(selection: $selection) {
-                    // All Connections
-                    NavigationLink(value: SidebarSelection.all) {
-                        HStack {
-                            Label("All", systemImage: "tray.full.fill")
-                            Spacer()
-                            Text("\(allConnections.count)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-
-                    Section("Folders") {
-                        ForEach(folders) { folder in
-                            NavigationLink(value: SidebarSelection.folder(folder)) {
-                                HStack {
-                                    Label(folder.name, systemImage: "folder.fill")
-                                    Spacer()
-                                    Text("\(folder.connections.count)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .contextMenu {
-                                Button(role: .destructive, action: {
-                                    folderToDelete = folder
-                                    showingDeleteFolderConfirmation = true
-                                }) {
-                                    Label("Delete Folder", systemImage: "trash")
-                                }
-                            }
-                        }
-
-                        // Add folder button in the list
-                        Button(action: { showingNewFolderSheet = true }) {
-                            Label("New Folder", systemImage: "plus.circle")
-                                .foregroundColor(.blue)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .navigationTitle("macSCP")
-            }
+            sidebarContent
         } detail: {
-            // Main content showing connections
-            switch selection {
-            case .all:
-                AllConnectionsView(allConnections: allConnections)
-            case .folder(let folder):
-                FolderContentView(folder: folder)
-            case .none:
-                NoFolderSelectedView(onCreateFolder: { showingNewFolderSheet = true })
-            }
+            detailContent
         }
         .sheet(isPresented: $showingNewFolderSheet) {
-            NewFolderView(folderName: $newFolderName, onCreate: {
-                createFolder()
-            })
+            newFolderSheet
         }
         .sheet(isPresented: $showingNewConnectionSheet) {
-            if case .folder(let folder) = selection {
-                NewConnectionSheetView(folder: folder)
-            } else {
-                NewConnectionSheetView(folder: nil)
-            }
+            newConnectionSheet
+        }
+        .sheet(isPresented: $showingNewS3ConnectionSheet) {
+            newS3ConnectionSheet
         }
         .alert("Delete Folder", isPresented: $showingDeleteFolderConfirmation, presenting: folderToDelete) { folder in
-            Button("Cancel", role: .cancel) {
-                folderToDelete = nil
-            }
-
-            if !folder.connections.isEmpty {
-                Button("Keep Connections", role: .none) {
-                    deleteFolderOnly(folder)
-                }
-                Button("Delete All", role: .destructive) {
-                    deleteFolderAndConnections(folder)
-                }
-            } else {
-                Button("Delete Folder", role: .destructive) {
-                    deleteFolderOnly(folder)
-                }
-            }
+            deleteFolderAlertButtons(for: folder)
         } message: { folder in
-            if folder.connections.isEmpty {
-                Text("Are you sure you want to delete '\(folder.name)'?")
-            } else {
-                Text("The folder '\(folder.name)' contains \(folder.connections.count) connection(s). Do you want to keep the connections or delete everything?")
+            deleteFolderAlertMessage(for: folder)
+        }
+    }
+    
+    // MARK: - View Components
+    
+    private var sidebarContent: some View {
+        VStack(spacing: 0) {
+            List(selection: $selection) {
+                allConnectionsNavigationLink
+                foldersSection
             }
+            .navigationTitle("macSCP")
+        }
+    }
+    
+    private var allConnectionsNavigationLink: some View {
+        NavigationLink(value: SidebarSelection.all) {
+            HStack {
+                Label("All", systemImage: "tray.full.fill")
+                Spacer()
+                Text("\(allConnections.count + s3Connections.count)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
+    private var foldersSection: some View {
+        Section("Folders") {
+            ForEach(folders) { folder in
+                folderNavigationLink(for: folder)
+            }
+            
+            addFolderButton
+        }
+    }
+    
+    private func folderNavigationLink(for folder: ConnectionFolder) -> some View {
+        NavigationLink(value: SidebarSelection.folder(folder)) {
+            HStack {
+                Label(folder.name, systemImage: "folder.fill")
+                Spacer()
+                Text("\(folder.connections.count + folder.s3Connections.count)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .contextMenu {
+            Button(role: .destructive, action: {
+                folderToDelete = folder
+                showingDeleteFolderConfirmation = true
+            }) {
+                Label("Delete Folder", systemImage: "trash")
+            }
+        }
+    }
+    
+    private var addFolderButton: some View {
+        Button(action: { showingNewFolderSheet = true }) {
+            Label("New Folder", systemImage: "plus.circle")
+                .foregroundColor(.blue)
+        }
+        .buttonStyle(.plain)
+    }
+    
+    @ViewBuilder
+    private var detailContent: some View {
+        switch selection {
+        case .all:
+            AllConnectionsView(allConnections: allConnections, s3Connections: s3Connections)
+        case .folder(let folder):
+            FolderContentView(folder: folder)
+        case .none:
+            NoFolderSelectedView(onCreateFolder: { showingNewFolderSheet = true })
+        }
+    }
+    
+    private var newFolderSheet: some View {
+        NewFolderView(folderName: $newFolderName, onCreate: {
+            createFolder()
+        })
+    }
+    
+    @ViewBuilder
+    private var newConnectionSheet: some View {
+        if case .folder(let folder) = selection {
+            NewSSHConnectionSheetView(folder: folder)
+        } else {
+            NewSSHConnectionSheetView(folder: nil)
+        }
+    }
+    
+    @ViewBuilder
+    private var newS3ConnectionSheet: some View {
+        if case .folder(let folder) = selection {
+            NewS3ConnectionSheetView(folder: folder)
+        } else {
+            NewS3ConnectionSheetView(folder: nil)
+        }
+    }
+    
+    @ViewBuilder
+    private func deleteFolderAlertButtons(for folder: ConnectionFolder) -> some View {
+        Button("Cancel", role: .cancel) {
+            folderToDelete = nil
+        }
+
+        if !folder.connections.isEmpty {
+            Button("Keep Connections", role: .none) {
+                deleteFolderOnly(folder)
+            }
+            Button("Delete All", role: .destructive) {
+                deleteFolderAndConnections(folder)
+            }
+        } else {
+            Button("Delete Folder", role: .destructive) {
+                deleteFolderOnly(folder)
+            }
+        }
+    }
+    
+    private func deleteFolderAlertMessage(for folder: ConnectionFolder) -> Text {
+        if folder.connections.isEmpty {
+            return Text("Are you sure you want to delete '\(folder.name)'?")
+        } else {
+            return Text("The folder '\(folder.name)' contains \(folder.connections.count) connection(s). Do you want to keep the connections or delete everything?")
         }
     }
 
@@ -220,5 +274,5 @@ struct NoFolderSelectedView: View {
 
 #Preview {
     ConnectionListView()
-        .modelContainer(for: [ConnectionFolder.self, SSHConnection.self], inMemory: true)
+        .modelContainer(for: [ConnectionFolder.self, SSHConnection.self, S3Connection.self], inMemory: true)
 }

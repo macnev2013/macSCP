@@ -25,8 +25,9 @@ class SSHConnection {
     var privateKeyPath: String? // Path to the SSH key file
     var savePassword: Bool?
     var connectionDescription: String? // Description of the connection
-    var tags: [String]? // Tags for organizing/filtering
+    var tagsString: String? // Internal storage for tags as comma-separated string
     var iconName: String? // SF Symbol name for custom icon
+    var connectionType: ConnectionType = ConnectionType.sftp
 
     var folder: ConnectionFolder?
 
@@ -47,8 +48,13 @@ class SSHConnection {
     }
 
     var connectionTags: [String] {
-        get { tags ?? [] }
-        set { tags = newValue.isEmpty ? nil : newValue }
+        get { 
+            guard let tagsString = tagsString, !tagsString.isEmpty else { return [] }
+            return tagsString.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        }
+        set { 
+            tagsString = newValue.isEmpty ? nil : newValue.joined(separator: ",")
+        }
     }
 
     var displayIcon: String {
@@ -66,7 +72,7 @@ class SSHConnection {
         self.privateKeyPath = privateKeyPath
         self.savePassword = savePassword
         self.connectionDescription = description
-        self.tags = tags
+        self.tagsString = tags?.isEmpty == false ? tags!.joined(separator: ",") : nil
         self.iconName = iconName
         self.timestamp = Date()
         self.folder = folder

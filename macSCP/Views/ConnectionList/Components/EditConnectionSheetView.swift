@@ -283,7 +283,7 @@ struct EditConnectionSheetView: View {
         connection.port = portNumber
         connection.username = username.trimmingCharacters(in: .whitespacesAndNewlines)
         connection.connectionDescription = connectionDescription.isEmpty ? nil : connectionDescription
-        connection.tags = parsedTags.isEmpty ? nil : parsedTags
+        connection.connectionTags = parsedTags
         connection.iconName = selectedIcon == "server.rack" ? nil : selectedIcon
         connection.authenticationType = authenticationType
         connection.privateKeyPath = authenticationType == .key ? privateKeyPath : nil

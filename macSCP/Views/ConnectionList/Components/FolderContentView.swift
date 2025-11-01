@@ -15,33 +15,43 @@ struct FolderContentView: View {
     @Bindable var folder: ConnectionFolder
 
     @State private var showingNewConnectionSheet = false
+    @State private var showingNewS3ConnectionSheet = false
     @State private var selectedConnectionId: UUID?
+    @State private var selectedConnectionType: ConnectionType?
     @State private var showingPasswordPrompt = false
     @State private var connectionToEdit: SSHConnection?
+    @State private var s3ConnectionToEdit: S3Connection?
     @State private var showingDeleteConfirmation = false
     @State private var connectionToDelete: SSHConnection?
+    @State private var s3ConnectionToDelete: S3Connection?
 
     private var selectedConnection: SSHConnection? {
         folder.connections.first(where: { $0.id == selectedConnectionId })
     }
 
+    private var selectedS3Connection: S3Connection? {
+        folder.s3Connections.first(where: { $0.id == selectedConnectionId })
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Connections grid
-            if folder.connections.isEmpty {
+            if folder.connections.isEmpty && folder.s3Connections.isEmpty {
                 EmptyFolderView(onAddConnection: { showingNewConnectionSheet = true })
             } else {
                 ScrollView {
                     LazyVGrid(columns: [
                         GridItem(.adaptive(minimum: 320, maximum: 450), spacing: 16)
                     ], spacing: 16) {
+                        // SSH Connections
                         ForEach(folder.connections) { connection in
                             Button(action: {
                                 selectedConnectionId = connection.id
+                                selectedConnectionType = .sftp
                             }) {
                                 ConnectionCardView(
                                     connection: connection,
-                                    isSelected: selectedConnectionId == connection.id
+                                    isSelected: selectedConnectionId == connection.id && selectedConnectionType == .sftp
                                 )
                             }
                             .buttonStyle(.plain)
@@ -51,6 +61,7 @@ struct FolderContentView: View {
                             .contextMenu {
                                 Button(action: {
                                     selectedConnectionId = connection.id
+                                    selectedConnectionType = .sftp
                                     handleConnect(connection)
                                 }) {
                                     Label("Connect", systemImage: "arrow.right.circle.fill")
@@ -80,6 +91,55 @@ struct FolderContentView: View {
                                 }
                             }
                         }
+
+                        // S3 Connections
+                        ForEach(folder.s3Connections) { connection in
+                            Button(action: {
+                                selectedConnectionId = connection.id
+                                selectedConnectionType = .s3
+                            }) {
+                                S3ConnectionCardView(
+                                    connection: connection,
+                                    isSelected: selectedConnectionId == connection.id && selectedConnectionType == .s3
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .onTapGesture(count: 2) {
+                                handleS3Connect(connection)
+                            }
+                            .contextMenu {
+                                Button(action: {
+                                    selectedConnectionId = connection.id
+                                    selectedConnectionType = .s3
+                                    handleS3Connect(connection)
+                                }) {
+                                    Label("Connect", systemImage: "arrow.right.circle.fill")
+                                }
+
+                                Divider()
+
+                                Button(action: {
+                                    s3ConnectionToEdit = connection
+                                }) {
+                                    Label("Edit Connection", systemImage: "pencil")
+                                }
+
+                                Button(action: {
+                                    duplicateS3Connection(connection)
+                                }) {
+                                    Label("Duplicate", systemImage: "doc.on.doc")
+                                }
+
+                                Divider()
+
+                                Button(role: .destructive, action: {
+                                    s3ConnectionToDelete = connection
+                                    showingDeleteConfirmation = true
+                                }) {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                        }
                     }
                     .padding(16)
                 }
@@ -89,12 +149,20 @@ struct FolderContentView: View {
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Button(action: { showingNewConnectionSheet = true }) {
-                    Label("New Connection", systemImage: "plus")
+                    Label("New SSH Connection", systemImage: "plus")
+                }
+            }
+            ToolbarItem(placement: .automatic) {
+                Button(action: { showingNewS3ConnectionSheet = true }) {
+                    Label("New S3 Connection", systemImage: "externaldrive.connected.to.line.below")
                 }
             }
         }
         .sheet(isPresented: $showingNewConnectionSheet) {
-            NewConnectionSheetView(folder: folder)
+            NewSSHConnectionSheetView(folder: folder)
+        }
+        .sheet(isPresented: $showingNewS3ConnectionSheet) {
+            NewS3ConnectionSheetView(folder: folder)
         }
         .sheet(isPresented: $showingPasswordPrompt) {
             if let connection = selectedConnection {
@@ -109,15 +177,31 @@ struct FolderContentView: View {
         .sheet(item: $connectionToEdit) { connection in
             EditConnectionSheetView(connection: connection)
         }
-        .alert("Delete Connection", isPresented: $showingDeleteConfirmation, presenting: connectionToDelete) { connection in
+        .sheet(item: $s3ConnectionToEdit) { connection in
+            // TODO: Create EditS3ConnectionSheetView
+            Text("S3 Connection Edit - Coming Soon")
+                .padding()
+        }
+        .alert("Delete Connection", isPresented: $showingDeleteConfirmation, presenting: connectionToDelete ?? s3ConnectionToDelete as Any) { connection in
             Button("Cancel", role: .cancel) {
                 connectionToDelete = nil
+                s3ConnectionToDelete = nil
             }
             Button("Delete", role: .destructive) {
-                deleteConnection(connection)
+                if let sshConnection = connection as? SSHConnection {
+                    deleteConnection(sshConnection)
+                } else if let s3Connection = connection as? S3Connection {
+                    deleteS3Connection(s3Connection)
+                }
             }
         } message: { connection in
-            Text("Are you sure you want to delete '\(connection.name)'? This action cannot be undone.")
+            if let sshConnection = connection as? SSHConnection {
+                Text("Are you sure you want to delete '\(sshConnection.name)'? This action cannot be undone.")
+            } else if let s3Connection = connection as? S3Connection {
+                Text("Are you sure you want to delete '\(s3Connection.name)'? This action cannot be undone.")
+            } else {
+                Text("Are you sure you want to delete this connection? This action cannot be undone.")
+            }
         }
     }
 
@@ -217,6 +301,60 @@ struct FolderContentView: View {
             }
 
             connectionToDelete = nil
+        }
+    }
+
+    private func handleS3Connect(_ connection: S3Connection) {
+        // For S3 connections, we can connect directly without password prompt
+        // TODO: Implement S3 connection window opening
+        print("Connecting to S3: \(connection.name)")
+        // You can implement S3 connection logic here
+    }
+
+    private func duplicateS3Connection(_ connection: S3Connection) {
+        withAnimation {
+            // Create a new S3 connection with the same properties
+            let duplicatedConnection = S3Connection(
+                name: "\(connection.name) Copy",
+                endpoint: connection.endpoint,
+                accessKeyId: connection.accessKeyId,
+                secretAccessKey: connection.secretAccessKey,
+                connectionDescription: connection.displayDescription.isEmpty ? nil : connection.displayDescription,
+                tags: connection.connectionTags.isEmpty ? nil : connection.connectionTags,
+                iconName: connection.iconName,
+                folder: folder
+            )
+
+            modelContext.insert(duplicatedConnection)
+
+            // Save changes immediately
+            do {
+                try modelContext.save()
+            } catch {
+                print("Failed to duplicate S3 connection: \(error)")
+            }
+        }
+    }
+
+    private func deleteS3Connection(_ connection: S3Connection) {
+        withAnimation {
+            // Clear selection if deleting the selected connection
+            if selectedConnectionId == connection.id {
+                selectedConnectionId = nil
+                selectedConnectionType = nil
+            }
+
+            // Delete the connection
+            modelContext.delete(connection)
+
+            // Save changes immediately
+            do {
+                try modelContext.save()
+            } catch {
+                print("Failed to delete S3 connection: \(error)")
+            }
+
+            s3ConnectionToDelete = nil
         }
     }
 }

@@ -51,11 +51,8 @@ struct AllConnectionsView: View {
             .sheet(item: $connectionToEdit) { connection in
                 EditConnectionSheetView(connection: connection)
             }
-            // TODO: Create EditS3ConnectionSheetView
             .sheet(item: $s3ConnectionToEdit) { connection in
-                // EditS3ConnectionSheetView(connection: connection)
-                Text("S3 Connection Edit - Coming Soon")
-                    .padding()
+                EditS3ConnectionSheetView(connection: connection)
             }
             .alert("Delete Connection", isPresented: $showingDeleteConfirmation, presenting: connectionToDelete ?? s3ConnectionToDelete as Any) { connection in
                 deleteConfirmationButtons

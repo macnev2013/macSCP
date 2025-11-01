@@ -178,9 +178,7 @@ struct FolderContentView: View {
             EditConnectionSheetView(connection: connection)
         }
         .sheet(item: $s3ConnectionToEdit) { connection in
-            // TODO: Create EditS3ConnectionSheetView
-            Text("S3 Connection Edit - Coming Soon")
-                .padding()
+            EditS3ConnectionSheetView(connection: connection)
         }
         .alert("Delete Connection", isPresented: $showingDeleteConfirmation, presenting: connectionToDelete ?? s3ConnectionToDelete as Any) { connection in
             Button("Cancel", role: .cancel) {

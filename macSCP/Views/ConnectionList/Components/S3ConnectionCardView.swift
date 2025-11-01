@@ -75,18 +75,6 @@ struct S3ConnectionCardView: View {
                 }
 
                 HStack(spacing: 6) {
-                    Image(systemName: "person.crop.circle")
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary)
-                        .frame(width: 14)
-
-                    Text(connection.accessKeyId)
-                        .font(.system(size: 11))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                }
-
-                HStack(spacing: 6) {
                     Image(systemName: "folder.fill")
                         .font(.system(size: 10))
                         .foregroundColor(.secondary)

@@ -187,14 +187,6 @@ struct ConnectionCardView: View {
         )
         .contextMenu {
             Button {
-                onConnect()
-            } label: {
-                Label("Connect", systemImage: "cable.connector")
-            }
-
-            Divider()
-
-            Button {
                 onEdit()
             } label: {
                 Label("Edit", systemImage: "pencil")

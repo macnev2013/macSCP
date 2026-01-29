@@ -29,6 +29,7 @@ enum ConnectionFormMode {
 struct ConnectionFormSheet: View {
     let mode: ConnectionFormMode
     let savedPassword: String?
+    let folders: [Folder]
     let onSave: (Connection, String?) -> Void
     let onCancel: () -> Void
 
@@ -42,15 +43,20 @@ struct ConnectionFormSheet: View {
     @State private var password: String = ""
     @State private var description: String = ""
     @State private var iconName: String = "server.rack"
+    @State private var selectedFolderId: UUID?
+    @State private var tags: [String] = []
+    @State private var newTag: String = ""
 
     init(
         mode: ConnectionFormMode,
         savedPassword: String? = nil,
+        folders: [Folder] = [],
         onSave: @escaping (Connection, String?) -> Void,
         onCancel: @escaping () -> Void
     ) {
         self.mode = mode
         self.savedPassword = savedPassword
+        self.folders = folders
         self.onSave = onSave
         self.onCancel = onCancel
     }
@@ -103,6 +109,43 @@ struct ConnectionFormSheet: View {
                     }
                 }
 
+                Section("Organization") {
+                    Picker("Folder", selection: $selectedFolderId) {
+                        Text("None").tag(nil as UUID?)
+                        ForEach(folders) { folder in
+                            Text(folder.name).tag(folder.id as UUID?)
+                        }
+                    }
+
+                    // Tags
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            TextField("Add tag", text: $newTag)
+                                .textFieldStyle(.roundedBorder)
+                                .onSubmit {
+                                    addTag()
+                                }
+                            Button {
+                                addTag()
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(newTag.trimmed.isEmpty)
+                        }
+
+                        if !tags.isEmpty {
+                            FlowLayout(spacing: 6) {
+                                ForEach(tags, id: \.self) { tag in
+                                    TagChip(tag: tag) {
+                                        removeTag(tag)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Section("Optional") {
                     TextField("Description", text: $description, axis: .vertical)
                         .lineLimit(2...4)
@@ -137,7 +180,7 @@ struct ConnectionFormSheet: View {
             }
             .padding()
         }
-        .frame(width: 450, height: 550)
+        .frame(width: 450, height: 600)
         .onAppear {
             loadExistingData()
         }
@@ -162,6 +205,8 @@ struct ConnectionFormSheet: View {
             savePassword = connection.savePassword
             description = connection.description ?? ""
             iconName = connection.iconName
+            selectedFolderId = connection.folderId
+            tags = connection.tags
 
             if let saved = savedPassword {
                 password = saved
@@ -184,8 +229,9 @@ struct ConnectionFormSheet: View {
                 privateKeyPath: authMethod == .privateKey ? privateKeyPath.trimmed : nil,
                 savePassword: savePassword,
                 description: description.trimmed.isEmpty ? nil : description.trimmed,
+                tags: tags,
                 iconName: iconName,
-                folderId: existing.folderId,
+                folderId: selectedFolderId,
                 createdAt: existing.createdAt,
                 updatedAt: Date()
             )
@@ -199,7 +245,9 @@ struct ConnectionFormSheet: View {
                 privateKeyPath: authMethod == .privateKey ? privateKeyPath.trimmed : nil,
                 savePassword: savePassword,
                 description: description.trimmed.isEmpty ? nil : description.trimmed,
-                iconName: iconName
+                tags: tags,
+                iconName: iconName,
+                folderId: selectedFolderId
             )
         }
 
@@ -218,12 +266,116 @@ struct ConnectionFormSheet: View {
             privateKeyPath = url.path
         }
     }
+
+    private func addTag() {
+        let tag = newTag.trimmed
+        guard !tag.isEmpty, !tags.contains(tag) else { return }
+        tags.append(tag)
+        newTag = ""
+    }
+
+    private func removeTag(_ tag: String) {
+        tags.removeAll { $0 == tag }
+    }
+}
+
+// MARK: - Tag Chip
+struct TagChip: View {
+    let tag: String
+    let onRemove: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(tag)
+                .font(.system(size: 11, weight: .medium))
+
+            Button {
+                onRemove()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(isHovering ? .red : .secondary)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(.blue.opacity(0.1), in: Capsule())
+        .overlay {
+            Capsule()
+                .strokeBorder(.blue.opacity(0.2), lineWidth: 1)
+        }
+        .onHover { hovering in
+            isHovering = hovering
+        }
+    }
+}
+
+// MARK: - Flow Layout
+struct FlowLayout: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = FlowResult(
+            in: proposal.replacingUnspecifiedDimensions().width,
+            subviews: subviews,
+            spacing: spacing
+        )
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = FlowResult(
+            in: bounds.width,
+            subviews: subviews,
+            spacing: spacing
+        )
+
+        for (index, subview) in subviews.enumerated() {
+            subview.place(at: CGPoint(x: bounds.minX + result.positions[index].x,
+                                      y: bounds.minY + result.positions[index].y),
+                         proposal: .unspecified)
+        }
+    }
+
+    struct FlowResult {
+        var size: CGSize = .zero
+        var positions: [CGPoint] = []
+
+        init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
+            var x: CGFloat = 0
+            var y: CGFloat = 0
+            var rowHeight: CGFloat = 0
+
+            for subview in subviews {
+                let size = subview.sizeThatFits(.unspecified)
+
+                if x + size.width > maxWidth, x > 0 {
+                    x = 0
+                    y += rowHeight + spacing
+                    rowHeight = 0
+                }
+
+                positions.append(CGPoint(x: x, y: y))
+                rowHeight = max(rowHeight, size.height)
+                x += size.width + spacing
+            }
+
+            self.size = CGSize(width: maxWidth, height: y + rowHeight)
+        }
+    }
 }
 
 // MARK: - Preview
 #Preview("Create") {
     ConnectionFormSheet(
         mode: .create,
+        folders: [
+            Folder(name: "Production"),
+            Folder(name: "Development")
+        ],
         onSave: { _, _ in },
         onCancel: {}
     )
@@ -234,9 +386,14 @@ struct ConnectionFormSheet: View {
         mode: .edit(Connection(
             name: "Test Server",
             host: "test.example.com",
-            username: "admin"
+            username: "admin",
+            tags: ["production", "critical"]
         )),
         savedPassword: "secret123",
+        folders: [
+            Folder(name: "Production"),
+            Folder(name: "Development")
+        ],
         onSave: { _, _ in },
         onCancel: {}
     )

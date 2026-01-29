@@ -46,6 +46,7 @@ struct ConnectionListView: View {
         .sheet(isPresented: $viewModel.isShowingNewConnectionSheet) {
             ConnectionFormSheet(
                 mode: .create,
+                folders: viewModel.folders,
                 onSave: { connection, password in
                     Task {
                         await viewModel.saveConnection(connection, password: password)
@@ -61,6 +62,7 @@ struct ConnectionListView: View {
                 ConnectionFormSheet(
                     mode: .edit(connection),
                     savedPassword: viewModel.getSavedPassword(for: connection),
+                    folders: viewModel.folders,
                     onSave: { updatedConnection, password in
                         Task {
                             await viewModel.updateConnection(updatedConnection, password: password)

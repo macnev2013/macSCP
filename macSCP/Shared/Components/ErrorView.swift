@@ -2,7 +2,7 @@
 //  ErrorView.swift
 //  macSCP
 //
-//  Reusable error display view
+//  Reusable error display view - Modern macOS style
 //
 
 import SwiftUI
@@ -17,34 +17,57 @@ struct ErrorView: View {
     }
 
     var body: some View {
-        VStack(spacing: UIConstants.spacing) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.red)
+        VStack(spacing: 20) {
+            // Icon with gradient background
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [.red.opacity(0.15), .orange.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 80, height: 80)
 
-            Text("Error")
-                .font(.headline)
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 32, weight: .medium))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.red)
+            }
 
-            Text(error.localizedDescription)
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+            VStack(spacing: 8) {
+                Text("Something Went Wrong")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.primary)
 
-            if let suggestion = error.recoverySuggestion {
-                Text(suggestion)
-                    .font(.callout)
-                    .foregroundStyle(.tertiary)
+                Text(error.localizedDescription)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
+                    .lineSpacing(2)
+
+                if let suggestion = error.recoverySuggestion {
+                    Text(suggestion)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 4)
+                }
             }
 
             if let retryAction = retryAction {
-                Button("Retry") {
+                Button {
                     retryAction()
+                } label: {
+                    Label("Try Again", systemImage: "arrow.clockwise")
+                        .font(.system(size: 13, weight: .medium))
                 }
                 .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
             }
         }
-        .padding(UIConstants.spacing * 2)
+        .padding(40)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -54,19 +77,22 @@ struct CompactErrorView: View {
     let message: String
     let dismissAction: (() -> Void)?
 
+    @State private var isHovering = false
+
     init(message: String, dismissAction: (() -> Void)? = nil) {
         self.message = message
         self.dismissAction = dismissAction
     }
 
     var body: some View {
-        HStack(spacing: UIConstants.smallSpacing) {
+        HStack(spacing: 10) {
             Image(systemName: "exclamationmark.circle.fill")
+                .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(.red)
 
             Text(message)
-                .font(.callout)
-                .foregroundStyle(.secondary)
+                .font(.system(size: 12))
+                .foregroundStyle(.primary)
 
             Spacer()
 
@@ -74,14 +100,78 @@ struct CompactErrorView: View {
                 Button {
                     dismissAction()
                 } label: {
-                    Image(systemName: "xmark.circle.fill")
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.secondary)
+                        .frame(width: 20, height: 20)
+                        .background {
+                            Circle()
+                                .fill(isHovering ? Color.primary.opacity(0.1) : .clear)
+                        }
+                }
+                .buttonStyle(.plain)
+                .onHover { hovering in
+                    isHovering = hovering
+                }
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(.red.opacity(0.08))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(.red.opacity(0.2), lineWidth: 1)
+                }
+        }
+    }
+}
+
+// MARK: - Banner Error View
+struct ErrorBannerView: View {
+    let message: String
+    let dismissAction: (() -> Void)?
+
+    init(message: String, dismissAction: (() -> Void)? = nil) {
+        self.message = message
+        self.dismissAction = dismissAction
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 16))
+                .foregroundStyle(.white)
+
+            Text(message)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.white)
+
+            Spacer()
+
+            if let dismissAction = dismissAction {
+                Button {
+                    dismissAction()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.8))
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(UIConstants.smallSpacing)
-        .background(.red.opacity(0.1), in: RoundedRectangle(cornerRadius: UIConstants.smallCornerRadius))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            LinearGradient(
+                colors: [.red, .red.opacity(0.9)],
+                startPoint: .leading,
+                endPoint: .trailing
+            ),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .shadow(color: .red.opacity(0.3), radius: 10, x: 0, y: 5)
     }
 }
 
@@ -120,13 +210,34 @@ extension View {
         error: .connectionFailed("Connection refused"),
         retryAction: {}
     )
-    .frame(width: 300, height: 300)
+    .frame(width: 350, height: 350)
+    .background(Color(.windowBackgroundColor))
 }
 
 #Preview("Compact Error") {
-    CompactErrorView(
-        message: "Failed to load files",
-        dismissAction: {}
-    )
+    VStack(spacing: 16) {
+        CompactErrorView(
+            message: "Failed to load files",
+            dismissAction: {}
+        )
+
+        CompactErrorView(
+            message: "Network connection lost"
+        )
+    }
     .padding()
+    .frame(width: 350)
+}
+
+#Preview("Error Banner") {
+    VStack {
+        ErrorBannerView(
+            message: "Unable to connect to server",
+            dismissAction: {}
+        )
+        Spacer()
+    }
+    .padding()
+    .frame(width: 400, height: 200)
+    .background(Color(.windowBackgroundColor))
 }

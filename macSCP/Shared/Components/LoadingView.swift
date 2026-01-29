@@ -2,7 +2,7 @@
 //  LoadingView.swift
 //  macSCP
 //
-//  Reusable loading indicator view
+//  Reusable loading indicator view - Modern macOS style
 //
 
 import SwiftUI
@@ -15,16 +15,17 @@ struct LoadingView: View {
     }
 
     var body: some View {
-        VStack(spacing: UIConstants.spacing) {
+        VStack(spacing: 16) {
             ProgressView()
                 .progressViewStyle(.circular)
-                .scaleEffect(1.2)
+                .controlSize(.large)
 
             Text(message)
-                .font(.callout)
+                .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.ultraThinMaterial)
     }
 }
 
@@ -37,15 +38,18 @@ struct InlineLoadingView: View {
     }
 
     var body: some View {
-        HStack(spacing: UIConstants.smallSpacing) {
+        HStack(spacing: 10) {
             ProgressView()
                 .progressViewStyle(.circular)
                 .controlSize(.small)
 
             Text(message)
-                .font(.callout)
+                .font(.system(size: 12))
                 .foregroundStyle(.secondary)
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
@@ -59,20 +63,68 @@ struct LoadingOverlayView: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3)
+            Color.black.opacity(0.2)
                 .ignoresSafeArea()
 
-            VStack(spacing: UIConstants.spacing) {
+            VStack(spacing: 16) {
                 ProgressView()
                     .progressViewStyle(.circular)
-                    .scaleEffect(1.5)
+                    .controlSize(.large)
 
                 Text(message)
-                    .font(.headline)
-                    .foregroundStyle(.white)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.primary)
             }
-            .padding(UIConstants.spacing * 2)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: UIConstants.cornerRadius))
+            .padding(32)
+            .background {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.ultraThinMaterial)
+                    .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
+            }
+        }
+    }
+}
+
+// MARK: - Pulsing Dot Loading
+struct PulsingLoadingView: View {
+    let message: String
+    @State private var isAnimating = false
+
+    init(message: String = "Loading...") {
+        self.message = message
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 8) {
+                ForEach(0..<3) { index in
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [.blue, .cyan],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 10, height: 10)
+                        .scaleEffect(isAnimating ? 1.0 : 0.5)
+                        .opacity(isAnimating ? 1.0 : 0.3)
+                        .animation(
+                            .easeInOut(duration: 0.6)
+                            .repeatForever()
+                            .delay(Double(index) * 0.2),
+                            value: isAnimating
+                        )
+                }
+            }
+
+            Text(message)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            isAnimating = true
         }
     }
 }
@@ -90,8 +142,13 @@ struct LoadingOverlayView: View {
 
 #Preview("Loading Overlay") {
     ZStack {
-        Color.gray
+        Color(.windowBackgroundColor)
         LoadingOverlayView(message: "Uploading file...")
     }
     .frame(width: 400, height: 300)
+}
+
+#Preview("Pulsing Loading") {
+    PulsingLoadingView(message: "Connecting to server...")
+        .frame(width: 300, height: 200)
 }

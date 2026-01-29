@@ -467,8 +467,12 @@ final class FileBrowserViewModel {
 }
 
 // MARK: - Path Component
-struct PathComponent: Identifiable {
+struct PathComponent: Identifiable, Equatable {
     let id = UUID()
     let name: String
     let path: String
+
+    static func == (lhs: PathComponent, rhs: PathComponent) -> Bool {
+        lhs.path == rhs.path && lhs.name == rhs.name
+    }
 }

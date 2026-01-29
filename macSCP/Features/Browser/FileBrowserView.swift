@@ -143,15 +143,25 @@ struct FileBrowserView: View {
     }
 
     private var statusBar: some View {
-        HStack {
+        HStack(spacing: 16) {
             // Connection status
-            HStack(spacing: 4) {
+            HStack(spacing: 6) {
                 Circle()
-                    .fill(viewModel.isConnected ? .green : .red)
+                    .fill(
+                        RadialGradient(
+                            colors: viewModel.isConnected
+                                ? [.green.opacity(0.8), .green]
+                                : [.red.opacity(0.8), .red],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 4
+                        )
+                    )
                     .frame(width: 8, height: 8)
+                    .shadow(color: viewModel.isConnected ? .green.opacity(0.5) : .red.opacity(0.5), radius: 2)
 
                 Text(viewModel.isConnected ? viewModel.connection.connectionString : "Disconnected")
-                    .font(.caption)
+                    .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.secondary)
             }
 
@@ -165,19 +175,24 @@ struct FileBrowserView: View {
             Spacer()
 
             // File count
-            Text("\(viewModel.sortedFiles.count) items")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            if !viewModel.selectedFiles.isEmpty {
-                Text("(\(viewModel.selectedFiles.count) selected)")
-                    .font(.caption)
+            HStack(spacing: 8) {
+                Text("\(viewModel.sortedFiles.count) items")
+                    .font(.system(size: 11))
                     .foregroundStyle(.secondary)
+
+                if !viewModel.selectedFiles.isEmpty {
+                    Text("\(viewModel.selectedFiles.count) selected")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.primary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(.blue.opacity(0.1), in: Capsule())
+                }
             }
         }
-        .padding(.horizontal)
-        .padding(.vertical, 6)
-        .background(Color(.windowBackgroundColor))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.ultraThinMaterial)
     }
 
     private func openFileInEditor(_ file: RemoteFile) {
@@ -201,16 +216,25 @@ struct ClipboardStatusView: View {
     let displayText: String
 
     var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "doc.on.clipboard")
-                .font(.caption)
+        HStack(spacing: 6) {
+            Image(systemName: "doc.on.clipboard.fill")
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(.blue)
+
             Text(displayText)
-                .font(.caption)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.primary)
         }
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 2)
-        .background(.secondary.opacity(0.1), in: Capsule())
+        .padding(.horizontal, 10)
+        .padding(.vertical, 4)
+        .background {
+            Capsule()
+                .fill(.blue.opacity(0.1))
+                .overlay {
+                    Capsule()
+                        .strokeBorder(.blue.opacity(0.2), lineWidth: 1)
+                }
+        }
     }
 }
 

@@ -2,7 +2,7 @@
 //  BrowserToolbar.swift
 //  macSCP
 //
-//  Toolbar for the file browser
+//  Toolbar for the file browser - Modern macOS style
 //
 
 import SwiftUI
@@ -11,66 +11,71 @@ struct BrowserToolbar: View {
     @Bindable var viewModel: FileBrowserViewModel
 
     var body: some View {
-        HStack(spacing: UIConstants.spacing) {
+        HStack(spacing: 0) {
             // Navigation buttons
             navigationButtons
+                .padding(.horizontal, 12)
 
             Divider()
-                .frame(height: 20)
+                .frame(height: 24)
 
             // Action buttons
             actionButtons
+                .padding(.horizontal, 12)
 
             Spacer()
 
             // View options
             viewOptions
+                .padding(.horizontal, 12)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(Color(.windowBackgroundColor))
+        .frame(height: 44)
+        .background(.ultraThinMaterial)
     }
 
     private var navigationButtons: some View {
-        HStack(spacing: 4) {
-            Button {
-                Task { await viewModel.goBack() }
-            } label: {
-                Image(systemName: "chevron.left")
-            }
-            .disabled(!viewModel.canGoBack)
+        HStack(spacing: 2) {
+            ToolbarButton(
+                icon: "chevron.left",
+                action: { Task { await viewModel.goBack() } },
+                isDisabled: !viewModel.canGoBack,
+                tooltip: "Go Back"
+            )
 
-            Button {
-                Task { await viewModel.goForward() }
-            } label: {
-                Image(systemName: "chevron.right")
-            }
-            .disabled(!viewModel.canGoForward)
+            ToolbarButton(
+                icon: "chevron.right",
+                action: { Task { await viewModel.goForward() } },
+                isDisabled: !viewModel.canGoForward,
+                tooltip: "Go Forward"
+            )
 
-            Button {
-                Task { await viewModel.goUp() }
-            } label: {
-                Image(systemName: "chevron.up")
-            }
-            .disabled(!viewModel.canGoUp)
+            ToolbarButton(
+                icon: "chevron.up",
+                action: { Task { await viewModel.goUp() } },
+                isDisabled: !viewModel.canGoUp,
+                tooltip: "Go Up"
+            )
 
-            Button {
-                Task { await viewModel.goHome() }
-            } label: {
-                Image(systemName: "house")
-            }
+            Divider()
+                .frame(height: 16)
+                .padding(.horizontal, 4)
 
-            Button {
-                Task { await viewModel.refresh() }
-            } label: {
-                Image(systemName: "arrow.clockwise")
-            }
+            ToolbarButton(
+                icon: "house",
+                action: { Task { await viewModel.goHome() } },
+                tooltip: "Go Home"
+            )
+
+            ToolbarButton(
+                icon: "arrow.clockwise",
+                action: { Task { await viewModel.refresh() } },
+                tooltip: "Refresh"
+            )
         }
-        .buttonStyle(.borderless)
     }
 
     private var actionButtons: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 2) {
             Menu {
                 Button {
                     viewModel.isShowingNewFolderSheet = true
@@ -84,64 +89,66 @@ struct BrowserToolbar: View {
                     Label("New File", systemImage: "doc.badge.plus")
                 }
             } label: {
-                Image(systemName: "plus")
+                ToolbarButtonLabel(icon: "plus", tooltip: "New")
             }
+            .menuStyle(.borderlessButton)
+            .frame(width: 32)
 
-            Button {
-                Task { await viewModel.uploadFiles() }
-            } label: {
-                Image(systemName: "square.and.arrow.up")
-            }
-            .help("Upload files")
+            ToolbarButton(
+                icon: "square.and.arrow.up",
+                action: { Task { await viewModel.uploadFiles() } },
+                tooltip: "Upload"
+            )
 
             Divider()
                 .frame(height: 16)
+                .padding(.horizontal, 4)
 
-            Button {
-                viewModel.copySelectedFiles()
-            } label: {
-                Image(systemName: "doc.on.doc")
-            }
-            .disabled(viewModel.selectedFiles.isEmpty)
-            .help("Copy")
+            ToolbarButton(
+                icon: "doc.on.doc",
+                action: { viewModel.copySelectedFiles() },
+                isDisabled: viewModel.selectedFiles.isEmpty,
+                tooltip: "Copy"
+            )
 
-            Button {
-                viewModel.cutSelectedFiles()
-            } label: {
-                Image(systemName: "scissors")
-            }
-            .disabled(viewModel.selectedFiles.isEmpty)
-            .help("Cut")
+            ToolbarButton(
+                icon: "scissors",
+                action: { viewModel.cutSelectedFiles() },
+                isDisabled: viewModel.selectedFiles.isEmpty,
+                tooltip: "Cut"
+            )
 
-            Button {
-                Task { await viewModel.paste() }
-            } label: {
-                Image(systemName: "doc.on.clipboard")
-            }
-            .disabled(!viewModel.canPaste)
-            .help("Paste")
+            ToolbarButton(
+                icon: "doc.on.clipboard",
+                action: { Task { await viewModel.paste() } },
+                isDisabled: !viewModel.canPaste,
+                tooltip: "Paste"
+            )
 
             Divider()
                 .frame(height: 16)
+                .padding(.horizontal, 4)
 
-            Button {
-                viewModel.confirmDeleteSelected()
-            } label: {
-                Image(systemName: "trash")
-            }
-            .disabled(viewModel.selectedFiles.isEmpty)
-            .help("Delete")
+            ToolbarButton(
+                icon: "trash",
+                action: { viewModel.confirmDeleteSelected() },
+                isDisabled: viewModel.selectedFiles.isEmpty,
+                tooltip: "Delete",
+                isDestructive: true
+            )
         }
-        .buttonStyle(.borderless)
     }
 
     private var viewOptions: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 2) {
             Toggle(isOn: $viewModel.showHiddenFiles) {
-                Image(systemName: "eye")
+                Image(systemName: viewModel.showHiddenFiles ? "eye.fill" : "eye.slash")
+                    .font(.system(size: 12, weight: .medium))
             }
             .toggleStyle(.button)
-            .help("Show hidden files")
+            .buttonStyle(.borderless)
+            .frame(width: 32, height: 32)
+            .help("Toggle hidden files")
 
             Menu {
                 ForEach(RemoteFile.SortCriteria.allCases, id: \.self) { criteria in
@@ -155,18 +162,88 @@ struct BrowserToolbar: View {
                     } label: {
                         HStack {
                             Text(criteria.rawValue)
+                            Spacer()
                             if viewModel.sortCriteria == criteria {
                                 Image(systemName: viewModel.sortAscending ? "chevron.up" : "chevron.down")
+                                    .font(.caption)
                             }
                         }
                     }
                 }
             } label: {
-                Image(systemName: "arrow.up.arrow.down")
+                ToolbarButtonLabel(icon: "arrow.up.arrow.down", tooltip: "Sort")
             }
             .menuStyle(.borderlessButton)
-            .help("Sort options")
+            .frame(width: 32)
         }
+    }
+}
+
+// MARK: - Toolbar Button
+struct ToolbarButton: View {
+    let icon: String
+    let action: () -> Void
+    var isDisabled: Bool = false
+    var tooltip: String = ""
+    var isDestructive: Bool = false
+
+    @State private var isHovering = false
+    @State private var isPressed = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(
+                    isDisabled ? Color.secondary.opacity(0.5) :
+                    (isDestructive && isHovering ? Color.red : Color.primary)
+                )
+                .frame(width: 28, height: 28)
+                .background {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(
+                            isPressed ? Color.primary.opacity(0.12) :
+                            (isHovering ? Color.primary.opacity(0.06) : .clear)
+                        )
+                }
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .onHover { hovering in
+            isHovering = hovering
+        }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in isPressed = false }
+        )
+        .animation(.easeInOut(duration: 0.1), value: isHovering)
+        .animation(.easeInOut(duration: 0.05), value: isPressed)
+        .help(tooltip)
+    }
+}
+
+// MARK: - Toolbar Button Label (for menus)
+struct ToolbarButtonLabel: View {
+    let icon: String
+    var tooltip: String = ""
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Image(systemName: icon)
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(.primary)
+            .frame(width: 28, height: 28)
+            .background {
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(isHovering ? Color.primary.opacity(0.06) : .clear)
+            }
+            .onHover { hovering in
+                isHovering = hovering
+            }
+            .animation(.easeInOut(duration: 0.1), value: isHovering)
+            .help(tooltip)
     }
 }
 

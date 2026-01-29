@@ -2,7 +2,7 @@
 //  ConnectionCardView.swift
 //  macSCP
 //
-//  Card view for displaying a single connection
+//  Card view for displaying a single connection - Modern macOS style
 //
 
 import SwiftUI
@@ -17,101 +17,160 @@ struct ConnectionCardView: View {
     let onSelect: (Bool) -> Void
 
     @State private var isHovering = false
+    @State private var isPressed = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIConstants.smallSpacing) {
-            // Header
-            HStack {
-                Image(systemName: connection.iconName)
-                    .font(.title2)
-                    .foregroundStyle(.blue)
+        VStack(alignment: .leading, spacing: 12) {
+            // Header with icon and auth indicator
+            HStack(spacing: 12) {
+                // Server icon with gradient background
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [.blue.opacity(0.8), .blue.opacity(0.5)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 40, height: 40)
+
+                    Image(systemName: connection.iconName)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(.white)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(connection.name)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+
+                    Text(connection.connectionString)
+                        .font(.system(size: 11, weight: .regular, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
 
                 Spacer()
-
-                if connection.authMethod == .privateKey {
-                    Image(systemName: "key.fill")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
             }
-
-            // Name
-            Text(connection.name)
-                .font(.headline)
-                .lineLimit(1)
-
-            // Connection string
-            Text(connection.connectionString)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
 
             // Description
             if let description = connection.description, !description.isEmpty {
                 Text(description)
-                    .font(.caption)
+                    .font(.system(size: 12))
                     .foregroundStyle(.tertiary)
                     .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            Spacer()
+            Spacer(minLength: 0)
 
-            // Tags
-            if !connection.tags.isEmpty {
-                HStack(spacing: 4) {
-                    ForEach(connection.tags.prefix(3), id: \.self) { tag in
+            // Tags and status
+            HStack(spacing: 6) {
+                if !connection.tags.isEmpty {
+                    ForEach(connection.tags.prefix(2), id: \.self) { tag in
                         Text(tag)
-                            .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(.secondary.opacity(0.2), in: Capsule())
-                    }
-                    if connection.tags.count > 3 {
-                        Text("+\(connection.tags.count - 3)")
-                            .font(.caption2)
+                            .font(.system(size: 10, weight: .medium))
                             .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(.quaternary, in: Capsule())
                     }
+                    if connection.tags.count > 2 {
+                        Text("+\(connection.tags.count - 2)")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+
+                Spacer()
+
+                // Connect button on hover
+                if isHovering {
+                    Button {
+                        onConnect()
+                    } label: {
+                        Text("Connect")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
             }
         }
-        .padding()
-        .frame(height: 160)
-        .background(
-            RoundedRectangle(cornerRadius: UIConstants.cornerRadius)
-                .fill(isSelected ? Color.accentColor.opacity(0.1) : Color(.windowBackgroundColor))
+        .padding(14)
+        .frame(height: 140)
+        .background {
+            ZStack {
+                // Base material background
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(.ultraThinMaterial)
+
+                // Selection/hover highlight
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(isSelected ? Color.accentColor.opacity(0.12) : (isHovering ? Color.primary.opacity(0.03) : .clear))
+
+                // Border
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        isSelected ? Color.accentColor.opacity(0.5) : Color.primary.opacity(isHovering ? 0.1 : 0.06),
+                        lineWidth: isSelected ? 1.5 : 1
+                    )
+            }
+        }
+        .shadow(
+            color: .black.opacity(isHovering ? 0.12 : 0.06),
+            radius: isHovering ? 8 : 4,
+            x: 0,
+            y: isHovering ? 4 : 2
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: UIConstants.cornerRadius)
-                .stroke(isSelected ? Color.accentColor : Color.gray.opacity(0.2), lineWidth: isSelected ? 2 : 1)
-        )
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isHovering)
+        .animation(.easeInOut(duration: 0.1), value: isPressed)
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
         .onHover { hovering in
             isHovering = hovering
         }
         .onTapGesture(count: 2) {
             onConnect()
         }
-        .onTapGesture(count: 1) {
-            onSelect(!isSelected)
-        }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in
+                    isPressed = false
+                    onSelect(!isSelected)
+                }
+        )
         .contextMenu {
-            Button("Connect") {
+            Button {
                 onConnect()
+            } label: {
+                Label("Connect", systemImage: "cable.connector")
             }
 
             Divider()
 
-            Button("Edit") {
+            Button {
                 onEdit()
+            } label: {
+                Label("Edit", systemImage: "pencil")
             }
 
-            Button("Duplicate") {
+            Button {
                 onDuplicate()
+            } label: {
+                Label("Duplicate", systemImage: "plus.square.on.square")
             }
 
             Divider()
 
-            Button("Delete", role: .destructive) {
+            Button(role: .destructive) {
                 onDelete()
+            } label: {
+                Label("Delete", systemImage: "trash")
             }
         }
     }
@@ -119,14 +178,14 @@ struct ConnectionCardView: View {
 
 // MARK: - Preview
 #Preview {
-    HStack {
+    HStack(spacing: 16) {
         ConnectionCardView(
             connection: Connection(
                 name: "Production Server",
                 host: "prod.example.com",
                 username: "admin",
-                description: "Main production server",
-                tags: ["production", "critical"]
+                description: "Main production server for deployment",
+                tags: ["production", "critical", "aws"]
             ),
             isSelected: false,
             onConnect: {},
@@ -152,6 +211,7 @@ struct ConnectionCardView: View {
             onSelect: { _ in }
         )
     }
-    .padding()
-    .frame(width: 500)
+    .padding(24)
+    .frame(width: 520)
+    .background(Color(.windowBackgroundColor))
 }

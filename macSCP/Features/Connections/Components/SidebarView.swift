@@ -2,7 +2,7 @@
 //  SidebarView.swift
 //  macSCP
 //
-//  Sidebar view for connection folders
+//  Sidebar view for connection folders - Modern macOS style
 //
 
 import SwiftUI
@@ -17,16 +17,27 @@ struct SidebarView: View {
                 Label {
                     HStack {
                         Text("All Connections")
+                            .fontWeight(.medium)
                         Spacer()
-                        BadgeView(count: viewModel.totalConnectionCount)
+                        if viewModel.totalConnectionCount > 0 {
+                            Text("\(viewModel.totalConnectionCount)")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(.quaternary, in: Capsule())
+                        }
                     }
                 } icon: {
                     Image(systemName: "server.rack")
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.blue)
                 }
             }
 
             // Folders Section
-            Section("Folders") {
+            Section {
                 ForEach(viewModel.folders) { folder in
                     NavigationLink(value: SidebarSelection.folder(folder.id)) {
                         FolderRowView(
@@ -48,13 +59,28 @@ struct SidebarView: View {
                 Button {
                     viewModel.isShowingNewFolderSheet = true
                 } label: {
-                    Label("New Folder", systemImage: "folder.badge.plus")
-                        .foregroundStyle(.secondary)
+                    Label {
+                        Text("New Folder")
+                            .foregroundStyle(.secondary)
+                    } icon: {
+                        Image(systemName: "folder.badge.plus")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .buttonStyle(.plain)
+            } header: {
+                Text("Folders")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+                    .tracking(0.5)
             }
         }
         .listStyle(.sidebar)
+        .scrollContentBackground(.hidden)
+        .background(.ultraThinMaterial)
         .frame(minWidth: 200)
     }
 }
@@ -68,6 +94,7 @@ struct FolderRowView: View {
 
     @State private var isRenaming = false
     @State private var newName: String = ""
+    @State private var isHovering = false
 
     var body: some View {
         Label {
@@ -75,6 +102,7 @@ struct FolderRowView: View {
                 if isRenaming {
                     TextField("Name", text: $newName)
                         .textFieldStyle(.plain)
+                        .font(.body)
                         .onSubmit {
                             if !newName.trimmed.isEmpty {
                                 onRename(newName.trimmed)
@@ -86,28 +114,47 @@ struct FolderRowView: View {
                         }
                 } else {
                     Text(folder.name)
+                        .fontWeight(.medium)
                 }
 
                 Spacer()
 
                 if connectionCount > 0 {
-                    BadgeView(count: connectionCount)
+                    Text("\(connectionCount)")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.quaternary, in: Capsule())
                 }
             }
         } icon: {
-            Image(systemName: "folder.fill")
-                .foregroundStyle(.blue)
+            ZStack {
+                Image(systemName: "folder.fill")
+                    .font(.body)
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(isHovering ? .blue : .cyan)
+            }
+            .animation(.easeInOut(duration: 0.15), value: isHovering)
+        }
+        .onHover { hovering in
+            isHovering = hovering
         }
         .contextMenu {
-            Button("Rename") {
+            Button {
                 newName = folder.name
                 isRenaming = true
+            } label: {
+                Label("Rename", systemImage: "pencil")
             }
 
             Divider()
 
-            Button("Delete", role: .destructive) {
+            Button(role: .destructive) {
                 onDelete()
+            } label: {
+                Label("Delete", systemImage: "trash")
             }
         }
     }

@@ -130,3 +130,6 @@ build/
 .vscode/
 .idea/
 *.sublime-*
+
+AGENTS.md
+CLAUDE.md

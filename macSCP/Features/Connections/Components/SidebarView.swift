@@ -74,7 +74,6 @@ struct SidebarView: View {
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
                     .tracking(0.5)
             }
         }

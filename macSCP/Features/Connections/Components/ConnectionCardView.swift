@@ -111,15 +111,13 @@ struct ConnectionCardView: View {
                 Spacer()
 
                 // Play button on hover
-                if isHovering {
-                    Button(action: onConnect) {
-                        Image(systemName: "play.circle.fill")
-                            .font(.system(size: 26))
-                            .symbolRenderingMode(.hierarchical)
-                    }
-                    .buttonStyle(.plain)
-                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                Button(action: onConnect) {
+                    Image(systemName: "play.circle.fill")
+                        .font(.system(size: 26))
+                        .symbolRenderingMode(.hierarchical)
                 }
+                .buttonStyle(.plain)
+                .opacity(isHovering ? 1 : 0)
             }
         }
         .padding(16)
@@ -164,10 +162,10 @@ struct ConnectionCardView: View {
             }
         }
         .shadow(
-            color: .black.opacity(isHovering ? 0.15 : 0.08),
-            radius: isHovering ? 12 : 6,
+            color: .black.opacity(0.1),
+            radius: 8,
             x: 0,
-            y: isHovering ? 6 : 3
+            y: 4
         )
         .scaleEffect(isPressed ? 0.98 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isHovering)

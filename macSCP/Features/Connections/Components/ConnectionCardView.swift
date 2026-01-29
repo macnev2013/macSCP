@@ -2,7 +2,7 @@
 //  ConnectionCardView.swift
 //  macSCP
 //
-//  Card view for displaying a single connection - Modern macOS style
+//  Card view for displaying a single connection - macOS Tahoe style
 //
 
 import SwiftUI
@@ -21,26 +21,50 @@ struct ConnectionCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header with icon and auth indicator
+            // Header with icon
             HStack(spacing: 12) {
-                // Server icon with gradient background
+                // Server icon with glass effect
                 ZStack {
+                    // Glass circle
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 42, height: 42)
+
+                    // Subtle gradient overlay
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [.blue.opacity(0.8), .blue.opacity(0.5)],
+                                colors: [
+                                    Color.blue.opacity(0.2),
+                                    Color.cyan.opacity(0.1)
+                                ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 40, height: 40)
+                        .frame(width: 42, height: 42)
+
+                    // Inner highlight
+                    Circle()
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.4),
+                                    Color.white.opacity(0.1)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.5
+                        )
+                        .frame(width: 42, height: 42)
 
                     Image(systemName: connection.iconName)
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.blue)
                 }
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(connection.name)
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.primary)
@@ -66,7 +90,7 @@ struct ConnectionCardView: View {
 
             Spacer(minLength: 0)
 
-            // Tags and status
+            // Tags and connect button
             HStack(spacing: 6) {
                 if !connection.tags.isEmpty {
                     ForEach(connection.tags.prefix(2), id: \.self) { tag in
@@ -74,8 +98,8 @@ struct ConnectionCardView: View {
                             .font(.system(size: 10, weight: .medium))
                             .foregroundStyle(.secondary)
                             .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(.quaternary, in: Capsule())
+                            .padding(.vertical, 4)
+                            .background(.ultraThinMaterial, in: Capsule())
                     }
                     if connection.tags.count > 2 {
                         Text("+\(connection.tags.count - 2)")
@@ -86,48 +110,67 @@ struct ConnectionCardView: View {
 
                 Spacer()
 
-                // Connect button on hover
+                // Play button on hover
                 if isHovering {
-                    Button {
-                        onConnect()
-                    } label: {
-                        Text("Connect")
-                            .font(.system(size: 11, weight: .medium))
+                    Button(action: onConnect) {
+                        Image(systemName: "play.circle.fill")
+                            .font(.system(size: 26))
+                            .symbolRenderingMode(.hierarchical)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.small)
+                    .buttonStyle(.plain)
                     .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
             }
         }
-        .padding(14)
+        .padding(16)
         .frame(height: 140)
         .background {
             ZStack {
-                // Base material background
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                // Base glass background
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(.ultraThinMaterial)
 
-                // Selection/hover highlight
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(isSelected ? Color.accentColor.opacity(0.12) : (isHovering ? Color.primary.opacity(0.03) : .clear))
+                // Gradient overlay for depth
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(isHovering ? 0.08 : 0.04),
+                                Color.clear
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
 
-                // Border
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                // Selection highlight
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color.accentColor.opacity(0.1))
+                }
+
+                // Border with gradient
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .strokeBorder(
-                        isSelected ? Color.accentColor.opacity(0.5) : Color.primary.opacity(isHovering ? 0.1 : 0.06),
+                        LinearGradient(
+                            colors: isSelected
+                                ? [Color.accentColor.opacity(0.6), Color.accentColor.opacity(0.3)]
+                                : [Color.white.opacity(isHovering ? 0.3 : 0.2), Color.white.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
                         lineWidth: isSelected ? 1.5 : 1
                     )
             }
         }
         .shadow(
-            color: .black.opacity(isHovering ? 0.12 : 0.06),
-            radius: isHovering ? 8 : 4,
+            color: .black.opacity(isHovering ? 0.15 : 0.08),
+            radius: isHovering ? 12 : 6,
             x: 0,
-            y: isHovering ? 4 : 2
+            y: isHovering ? 6 : 3
         )
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isHovering)
+        .animation(.easeInOut(duration: 0.2), value: isHovering)
         .animation(.easeInOut(duration: 0.1), value: isPressed)
         .animation(.easeInOut(duration: 0.2), value: isSelected)
         .onHover { hovering in

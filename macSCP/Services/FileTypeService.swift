@@ -72,33 +72,112 @@ enum FileTypeService {
         return utType.preferredMIMEType ?? "application/octet-stream"
     }
 
-    /// Returns a human-readable description of the file type
+    /// Returns a human-readable description of the file type (Finder style)
     static func typeDescription(for file: RemoteFile) -> String {
         if file.isDirectory {
             return "Folder"
         }
 
         if file.isSymlink {
-            return "Symbolic Link"
+            return "Alias"
         }
 
+        // Check for specific extensions first
+        switch file.fileExtension.lowercased() {
+        case "swift":
+            return "Swift Source"
+        case "js":
+            return "JavaScript"
+        case "ts":
+            return "TypeScript"
+        case "py":
+            return "Python Script"
+        case "rb":
+            return "Ruby Script"
+        case "go":
+            return "Go Source"
+        case "rs":
+            return "Rust Source"
+        case "java":
+            return "Java Source"
+        case "c":
+            return "C Source"
+        case "cpp", "cc":
+            return "C++ Source"
+        case "h":
+            return "C Header"
+        case "hpp":
+            return "C++ Header"
+        case "m":
+            return "Objective-C Source"
+        case "html", "htm":
+            return "HTML Document"
+        case "css":
+            return "CSS Stylesheet"
+        case "json":
+            return "JSON"
+        case "xml":
+            return "XML Document"
+        case "yaml", "yml":
+            return "YAML Document"
+        case "md", "markdown":
+            return "Markdown Document"
+        case "txt":
+            return "Plain Text"
+        case "pdf":
+            return "PDF Document"
+        case "png":
+            return "PNG Image"
+        case "jpg", "jpeg":
+            return "JPEG Image"
+        case "gif":
+            return "GIF Image"
+        case "svg":
+            return "SVG Image"
+        case "mp4":
+            return "MPEG-4 Movie"
+        case "mov":
+            return "QuickTime Movie"
+        case "mp3":
+            return "MP3 Audio"
+        case "wav":
+            return "WAV Audio"
+        case "zip":
+            return "ZIP Archive"
+        case "tar":
+            return "TAR Archive"
+        case "gz", "gzip":
+            return "Gzip Archive"
+        case "dmg":
+            return "Disk Image"
+        case "app":
+            return "Application"
+        case "xcodeproj":
+            return "Xcode Project"
+        case "xcworkspace":
+            return "Xcode Workspace"
+        default:
+            break
+        }
+
+        // Fallback to general type
         switch file.fileType {
         case .directory:
             return "Folder"
         case .text:
-            return "Text Document"
+            return "Plain Text"
         case .code:
-            return "\(file.fileExtension.uppercased()) Source File"
+            return "Source Code"
         case .image:
-            return "\(file.fileExtension.uppercased()) Image"
+            return "Image"
         case .video:
-            return "\(file.fileExtension.uppercased()) Video"
+            return "Movie"
         case .audio:
-            return "\(file.fileExtension.uppercased()) Audio"
+            return "Audio"
         case .archive:
-            return "\(file.fileExtension.uppercased()) Archive"
+            return "Archive"
         case .document:
-            return "\(file.fileExtension.uppercased()) Document"
+            return "Document"
         case .spreadsheet:
             return "Spreadsheet"
         case .presentation:
@@ -106,14 +185,14 @@ enum FileTypeService {
         case .pdf:
             return "PDF Document"
         case .executable:
-            return "Executable"
+            return "Unix Executable"
         case .configuration:
-            return "Configuration File"
+            return "Configuration"
         case .unknown:
             if file.fileExtension.isEmpty {
                 return "Document"
             }
-            return "\(file.fileExtension.uppercased()) File"
+            return "Document"
         }
     }
 

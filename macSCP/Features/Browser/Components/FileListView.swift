@@ -2,7 +2,7 @@
 //  FileListView.swift
 //  macSCP
 //
-//  List view for displaying files in the browser
+//  List view for displaying files in the browser - Finder style
 //
 
 import SwiftUI
@@ -13,28 +13,104 @@ struct FileListView: View {
     let onGetInfo: (RemoteFile) -> Void
 
     var body: some View {
-        List(selection: $viewModel.selectedFiles) {
-            ForEach(viewModel.sortedFiles) { file in
-                FileRowView(
-                    file: file,
-                    isSelected: viewModel.selectedFiles.contains(file.id),
-                    onDoubleClick: {
-                        Task {
-                            if file.isDirectory {
-                                await viewModel.navigateTo(file.path)
-                            } else if FileTypeService.isPreviewable(file) {
-                                onOpenEditor(file)
-                            }
-                        }
-                    }
-                )
-                .tag(file.id)
-                .contextMenu {
-                    fileContextMenu(for: file)
+        Table(viewModel.sortedFiles, selection: $viewModel.selectedFiles, sortOrder: $sortOrder) {
+            TableColumn("Name", sortUsing: nameSortComparator) { file in
+                HStack(spacing: 6) {
+                    Image(systemName: FileTypeService.iconName(for: file))
+                        .foregroundStyle(FileTypeService.iconColor(for: file))
+                        .frame(width: 16)
+
+                    Text(file.name)
+                        .lineLimit(1)
+                }
+                .onTapGesture(count: 2) {
+                    handleDoubleClick(file)
                 }
             }
+            .width(min: 200)
+
+            TableColumn("Kind", sortUsing: kindSortComparator) { file in
+                Text(FileTypeService.typeDescription(for: file))
+                    .foregroundStyle(.secondary)
+            }
+            .width(min: 100, ideal: 120)
+
+            TableColumn("Date Modified", sortUsing: dateSortComparator) { file in
+                Text(file.modificationDate?.fileListDisplayString ?? "--")
+                    .foregroundStyle(.secondary)
+            }
+            .width(min: 120, ideal: 140)
+
+            TableColumn("Size", sortUsing: sizeSortComparator) { file in
+                Text(file.displaySize)
+                    .foregroundStyle(.secondary)
+            }
+            .width(min: 60, ideal: 80)
         }
-        .listStyle(.inset(alternatesRowBackgrounds: true))
+        .contextMenu(forSelectionType: UUID.self) { selectedIds in
+            if let fileId = selectedIds.first,
+               let file = viewModel.sortedFiles.first(where: { $0.id == fileId }) {
+                fileContextMenu(for: file)
+            }
+        } primaryAction: { selectedIds in
+            if let fileId = selectedIds.first,
+               let file = viewModel.sortedFiles.first(where: { $0.id == fileId }) {
+                handleDoubleClick(file)
+            }
+        }
+        .onChange(of: sortOrder) { _, newOrder in
+            updateSorting(newOrder)
+        }
+    }
+
+    // MARK: - Sort State
+
+    @State private var sortOrder: [KeyPathComparator<RemoteFile>] = [
+        .init(\.name, order: .forward)
+    ]
+
+    private var nameSortComparator: KeyPathComparator<RemoteFile> {
+        .init(\.name, order: .forward)
+    }
+
+    private var kindSortComparator: KeyPathComparator<RemoteFile> {
+        .init(\.fileType.rawValue, order: .forward)
+    }
+
+    private var dateSortComparator: KeyPathComparator<RemoteFile> {
+        .init(\.modificationDate, order: .forward)
+    }
+
+    private var sizeSortComparator: KeyPathComparator<RemoteFile> {
+        .init(\.size, order: .forward)
+    }
+
+    private func updateSorting(_ order: [KeyPathComparator<RemoteFile>]) {
+        guard let first = order.first else { return }
+
+        let ascending = first.order == .forward
+
+        if first.keyPath == \RemoteFile.name {
+            viewModel.sortCriteria = .name
+        } else if first.keyPath == \RemoteFile.fileType.rawValue {
+            viewModel.sortCriteria = .type
+        } else if first.keyPath == \RemoteFile.modificationDate {
+            viewModel.sortCriteria = .date
+        } else if first.keyPath == \RemoteFile.size {
+            viewModel.sortCriteria = .size
+        }
+
+        viewModel.sortAscending = ascending
+    }
+
+    private func handleDoubleClick(_ file: RemoteFile) {
+        Task {
+            if file.isDirectory {
+                await viewModel.navigateTo(file.path)
+            } else if FileTypeService.isPreviewable(file) {
+                onOpenEditor(file)
+            }
+        }
     }
 
     @ViewBuilder

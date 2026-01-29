@@ -16,7 +16,7 @@ final class FileEditorViewModel {
     var error: AppError?
 
     var content: String
-    private let initialContent: String
+    private var savedContent: String
 
     let filePath: String
     let fileName: String
@@ -43,14 +43,14 @@ final class FileEditorViewModel {
         self.filePath = filePath
         self.fileName = fileName
         self.content = initialContent
-        self.initialContent = initialContent
+        self.savedContent = initialContent
         self.fileRepository = fileRepository
     }
 
     // MARK: - Computed Properties
 
     var hasChanges: Bool {
-        content != initialContent
+        content != savedContent
     }
 
     var lineCount: Int {
@@ -87,6 +87,7 @@ final class FileEditorViewModel {
 
         do {
             try await fileRepository.writeFileContent(content, to: filePath)
+            savedContent = content
             state = .success(())
             logInfo("File saved: \(fileName)", category: .sftp)
         } catch {
@@ -101,6 +102,7 @@ final class FileEditorViewModel {
 
         do {
             content = try await fileRepository.readFileContent(at: filePath)
+            savedContent = content
             state = .success(())
             logInfo("File reloaded: \(fileName)", category: .sftp)
         } catch {
@@ -111,7 +113,7 @@ final class FileEditorViewModel {
     }
 
     func revertChanges() {
-        content = initialContent
+        content = savedContent
         logInfo("Changes reverted for: \(fileName)", category: .ui)
     }
 

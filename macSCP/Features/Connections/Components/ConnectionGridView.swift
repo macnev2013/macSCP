@@ -92,9 +92,9 @@ struct ConnectionGridView: View {
                         },
                         onSelect: { selected in
                             if selected {
-                                viewModel.selectedConnections.insert(connection.id)
+                                viewModel.selectedConnections = [connection.id]
                             } else {
-                                viewModel.selectedConnections.remove(connection.id)
+                                viewModel.selectedConnections.removeAll()
                             }
                         }
                     )

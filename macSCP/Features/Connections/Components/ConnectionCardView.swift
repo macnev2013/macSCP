@@ -161,12 +161,6 @@ struct ConnectionCardView: View {
                     )
             }
         }
-        .shadow(
-            color: .black.opacity(0.1),
-            radius: 8,
-            x: 0,
-            y: 4
-        )
         .scaleEffect(isPressed ? 0.98 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isHovering)
         .animation(.easeInOut(duration: 0.1), value: isPressed)

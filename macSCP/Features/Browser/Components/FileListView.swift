@@ -116,55 +116,71 @@ struct FileListView: View {
     @ViewBuilder
     private func fileContextMenu(for file: RemoteFile) -> some View {
         if file.isFile {
-            Button("Open in Editor") {
+            Button {
                 onOpenEditor(file)
+            } label: {
+                Label("Open in Editor", systemImage: "pencil.and.outline")
             }
 
             Divider()
         }
 
-        Button("Copy") {
+        Button {
             viewModel.selectedFiles = [file.id]
             viewModel.copySelectedFiles()
+        } label: {
+            Label("Copy", systemImage: "doc.on.doc")
         }
 
-        Button("Cut") {
+        Button {
             viewModel.selectedFiles = [file.id]
             viewModel.cutSelectedFiles()
+        } label: {
+            Label("Cut", systemImage: "scissors")
         }
 
         if viewModel.canPaste {
-            Button("Paste") {
+            Button {
                 Task {
                     await viewModel.paste()
                 }
+            } label: {
+                Label("Paste", systemImage: "doc.on.clipboard")
             }
         }
 
         Divider()
 
-        Button("Rename") {
+        Button {
             viewModel.startRename(file)
+        } label: {
+            Label("Rename", systemImage: "pencil")
         }
 
-        Button("Get Info") {
+        Button {
             onGetInfo(file)
+        } label: {
+            Label("Get Info", systemImage: "info.circle")
         }
 
         Divider()
 
         if file.isFile {
-            Button("Download") {
+            Button {
                 Task {
                     await viewModel.downloadFile(file)
                 }
+            } label: {
+                Label("Download", systemImage: "arrow.down.circle")
             }
+
+            Divider()
         }
 
-        Divider()
-
-        Button("Delete", role: .destructive) {
+        Button(role: .destructive) {
             viewModel.confirmDelete([file])
+        } label: {
+            Label("Delete", systemImage: "trash")
         }
     }
 }

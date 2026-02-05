@@ -6,7 +6,7 @@
 set -e
 
 APP_NAME="macSCP"
-VERSION="0.2.2"
+VERSION="0.2.3"
 DMG_NAME="${APP_NAME}-${VERSION}"
 BUILD_DIR="build"
 DMG_DIR="dmg-staging"

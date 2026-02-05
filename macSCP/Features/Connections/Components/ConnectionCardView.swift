@@ -111,13 +111,32 @@ struct ConnectionCardView: View {
 
                 Spacer()
 
-                // Play button on hover
-                Button(action: onConnect) {
-                    Image(systemName: "play.circle.fill")
-                        .font(.system(size: 26))
-                        .symbolRenderingMode(.hierarchical)
+                // Action buttons on hover
+                HStack(spacing: 8) {
+                    // File browser button
+                    Button(action: onConnect) {
+                        Image(systemName: "folder.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.primary.opacity(0.8))
+                            .frame(width: 30, height: 30)
+                            .background(.primary.opacity(0.1), in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .help("Open File Browser")
+
+                    // Terminal button (SFTP only)
+                    if connection.connectionType == .sftp {
+                        Button(action: onOpenTerminal) {
+                            Image(systemName: "terminal.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(.primary.opacity(0.8))
+                                .frame(width: 30, height: 30)
+                                .background(.primary.opacity(0.1), in: Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .help("Open Terminal")
+                    }
                 }
-                .buttonStyle(.plain)
                 .opacity(isHovering ? 1 : 0)
             }
         }
@@ -184,7 +203,7 @@ struct ConnectionCardView: View {
             Button {
                 onConnect()
             } label: {
-                Label("Connect", systemImage: "play.circle")
+                Label("Open File Browser", systemImage: "folder")
             }
 
             Button {

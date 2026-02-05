@@ -251,9 +251,9 @@ struct SwiftTermWrapper: NSViewRepresentable {
                 connectionId: UUID(),
                 connectionName: "Test",
                 host: "localhost",
-                port: 22,
-                username: "user",
-                password: "password",
+                port: 2222,
+                username: "testuser",
+                password: "testpass",
                 authMethod: .password,
                 privateKeyPath: nil
             )

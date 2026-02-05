@@ -2,85 +2,110 @@
 //  SidebarView.swift
 //  macSCP
 //
-//  Sidebar view for connection folders - Modern macOS style
+//  Sidebar view for connection folders - Minimal macOS style
 //
 
 import SwiftUI
 
 struct SidebarView: View {
     @Bindable var viewModel: ConnectionListViewModel
+    @Environment(\.openURL) private var openURL
+
+    private let gitHubIssuesURL = URL(string: "https://github.com/saxobrern/macSCP/issues")!
+
+    // Check if All Connections is selected
+    private var isAllConnectionsSelected: Bool {
+        viewModel.selectedSidebarItem == .allConnections
+    }
+
+    // Check if a specific folder is selected
+    private func isFolderSelected(_ folderId: UUID) -> Bool {
+        if case .folder(let id) = viewModel.selectedSidebarItem {
+            return id == folderId
+        }
+        return false
+    }
 
     var body: some View {
-        List(selection: $viewModel.selectedSidebarItem) {
-            // All Connections
-            NavigationLink(value: SidebarSelection.allConnections) {
-                Label {
-                    HStack {
+        VStack(spacing: 0) {
+            List(selection: $viewModel.selectedSidebarItem) {
+                // All Connections
+                NavigationLink(value: SidebarSelection.allConnections) {
+                    Label {
                         Text("All Connections")
-                            .fontWeight(.medium)
-                        Spacer()
-                        if viewModel.totalConnectionCount > 0 {
-                            Text("\(viewModel.totalConnectionCount)")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(.quaternary, in: Capsule())
+                    } icon: {
+                        Image(systemName: "server.rack")
+                            .foregroundStyle(isAllConnectionsSelected ? .white : .blue)
+                    }
+                }
+
+                // Folders Section
+                Section("Folders") {
+                    ForEach(viewModel.folders) { folder in
+                        NavigationLink(value: SidebarSelection.folder(folder.id)) {
+                            FolderRowView(
+                                folder: folder,
+                                connectionCount: viewModel.connectionCount(for: folder.id),
+                                isSelected: isFolderSelected(folder.id),
+                                onRename: { newName in
+                                    Task {
+                                        await viewModel.renameFolder(folder, to: newName)
+                                    }
+                                },
+                                onDelete: {
+                                    viewModel.confirmDeleteFolder(folder)
+                                }
+                            )
                         }
                     }
-                } icon: {
-                    Image(systemName: "server.rack")
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(.blue)
-                }
-            }
 
-            // Folders Section
-            Section {
-                ForEach(viewModel.folders) { folder in
-                    NavigationLink(value: SidebarSelection.folder(folder.id)) {
-                        FolderRowView(
-                            folder: folder,
-                            connectionCount: viewModel.connectionCount(for: folder.id),
-                            onRename: { newName in
-                                Task {
-                                    await viewModel.renameFolder(folder, to: newName)
-                                }
-                            },
-                            onDelete: {
-                                viewModel.confirmDeleteFolder(folder)
-                            }
-                        )
-                    }
-                }
-
-                // New Folder Button
-                Button {
-                    viewModel.isShowingNewFolderSheet = true
-                } label: {
-                    Label {
-                        Text("New Folder")
-                            .foregroundStyle(.secondary)
-                    } icon: {
-                        Image(systemName: "folder.badge.plus")
-                            .symbolRenderingMode(.hierarchical)
+                    // New Folder Button
+                    Button {
+                        viewModel.isShowingNewFolderSheet = true
+                    } label: {
+                        Label("New Folder", systemImage: "folder.badge.plus")
                             .foregroundStyle(.secondary)
                     }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
-            } header: {
-                Text("Folders")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
-                    .tracking(0.5)
             }
+            .listStyle(.sidebar)
+
+            // Report Bug Card
+            Button {
+                openURL(gitHubIssuesURL)
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "ladybug.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.orange)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Found a bug?")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(.primary)
+                        Text("Report it on GitHub")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.primary.opacity(0.05))
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
         }
-        .listStyle(.sidebar)
-        .scrollContentBackground(.hidden)
-        .background(.ultraThinMaterial)
-        .frame(minWidth: 200)
+        .frame(minWidth: 180)
     }
 }
 
@@ -88,57 +113,33 @@ struct SidebarView: View {
 struct FolderRowView: View {
     let folder: Folder
     let connectionCount: Int
+    let isSelected: Bool
     let onRename: (String) -> Void
     let onDelete: () -> Void
 
     @State private var isRenaming = false
     @State private var newName: String = ""
-    @State private var isHovering = false
 
     var body: some View {
         Label {
-            HStack {
-                if isRenaming {
-                    TextField("Name", text: $newName)
-                        .textFieldStyle(.plain)
-                        .font(.body)
-                        .onSubmit {
-                            if !newName.trimmed.isEmpty {
-                                onRename(newName.trimmed)
-                            }
-                            isRenaming = false
+            if isRenaming {
+                TextField("Name", text: $newName)
+                    .textFieldStyle(.plain)
+                    .onSubmit {
+                        if !newName.trimmed.isEmpty {
+                            onRename(newName.trimmed)
                         }
-                        .onAppear {
-                            newName = folder.name
-                        }
-                } else {
-                    Text(folder.name)
-                        .fontWeight(.medium)
-                }
-
-                Spacer()
-
-                if connectionCount > 0 {
-                    Text("\(connectionCount)")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(.quaternary, in: Capsule())
-                }
+                        isRenaming = false
+                    }
+                    .onAppear {
+                        newName = folder.name
+                    }
+            } else {
+                Text(folder.name)
             }
         } icon: {
-            ZStack {
-                Image(systemName: "folder.fill")
-                    .font(.body)
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(isHovering ? .blue : .cyan)
-            }
-            .animation(.easeInOut(duration: 0.15), value: isHovering)
-        }
-        .onHover { hovering in
-            isHovering = hovering
+            Image(systemName: "folder.fill")
+                .foregroundStyle(isSelected ? .white : .cyan)
         }
         .contextMenu {
             Button {

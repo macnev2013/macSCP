@@ -11,6 +11,7 @@ struct ConnectionCardView: View {
     let connection: Connection
     let isSelected: Bool
     let onConnect: () -> Void
+    let onOpenTerminal: () -> Void
     let onEdit: () -> Void
     let onDuplicate: () -> Void
     let onDelete: () -> Void
@@ -181,6 +182,21 @@ struct ConnectionCardView: View {
         )
         .contextMenu {
             Button {
+                onConnect()
+            } label: {
+                Label("Connect", systemImage: "play.circle")
+            }
+
+            Button {
+                onOpenTerminal()
+            } label: {
+                Label("Open Terminal", systemImage: "terminal")
+            }
+            .disabled(connection.connectionType != .sftp)
+
+            Divider()
+
+            Button {
                 onEdit()
             } label: {
                 Label("Edit", systemImage: "pencil")
@@ -216,6 +232,7 @@ struct ConnectionCardView: View {
             ),
             isSelected: false,
             onConnect: {},
+            onOpenTerminal: {},
             onEdit: {},
             onDuplicate: {},
             onDelete: {},
@@ -232,6 +249,7 @@ struct ConnectionCardView: View {
             ),
             isSelected: true,
             onConnect: {},
+            onOpenTerminal: {},
             onEdit: {},
             onDuplicate: {},
             onDelete: {},

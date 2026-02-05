@@ -55,6 +55,11 @@ final class DependencyContainer: ObservableObject {
         S3Session()
     }
 
+    // MARK: - Terminal Session Factory
+    func makeTerminalSession() -> TerminalSessionProtocol {
+        TerminalSession()
+    }
+
     // MARK: - File Repository Factory
     func makeFileRepository(session: SFTPSessionProtocol) -> FileRepositoryProtocol {
         FileRepository(sftpSession: session)
@@ -122,6 +127,18 @@ final class DependencyContainer: ObservableObject {
 
     func makeFileInfoViewModel(file: RemoteFile, connectionName: String) -> FileInfoViewModel {
         FileInfoViewModel(file: file, connectionName: connectionName)
+    }
+
+    func makeTerminalViewModel(
+        connectionName: String,
+        session: TerminalSessionProtocol,
+        connectionData: TerminalWindowData
+    ) -> TerminalViewModel {
+        TerminalViewModel(
+            connectionName: connectionName,
+            session: session,
+            connectionData: connectionData
+        )
     }
 
     private init() {

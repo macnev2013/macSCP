@@ -67,6 +67,7 @@ final class FileBrowserViewModel {
     // Window opening state
     var pendingFileInfoWindowId: String?
     var pendingEditorWindowId: String?
+    var pendingTerminalWindowId: String?
 
     // MARK: - Connection Info
     let connection: Connection
@@ -703,6 +704,35 @@ final class FileBrowserViewModel {
 
     func clearPendingEditorWindow() {
         pendingEditorWindowId = nil
+    }
+
+    func clearPendingTerminalWindow() {
+        pendingTerminalWindowId = nil
+    }
+
+    // MARK: - Terminal
+
+    func openTerminal() {
+        // Only supported for SFTP connections
+        guard connection.connectionType == .sftp else {
+            logWarning("Terminal only supported for SFTP connections", category: .ui)
+            return
+        }
+
+        let data = TerminalWindowData(
+            connectionId: connection.id,
+            connectionName: connection.name,
+            host: connection.host,
+            port: connection.port,
+            username: connection.username,
+            password: password,
+            authMethod: connection.authMethod,
+            privateKeyPath: connection.privateKeyPath
+        )
+
+        let windowId = WindowManager.shared.storeTerminalData(data)
+        pendingTerminalWindowId = windowId
+        logInfo("Opening terminal from file browser", category: .ui)
     }
 
     func clearError() {

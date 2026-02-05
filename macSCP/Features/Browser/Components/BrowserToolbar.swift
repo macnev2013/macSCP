@@ -25,6 +25,17 @@ struct BrowserToolbar: View {
 
             Spacer()
 
+            // Terminal button (SFTP only)
+            if viewModel.connection.connectionType == .sftp {
+                ToolbarButton(
+                    icon: "terminal",
+                    action: { viewModel.openTerminal() },
+                    isDisabled: !viewModel.isConnected,
+                    tooltip: "Open Terminal"
+                )
+                .padding(.trailing, 4)
+            }
+
             // Transfers button
             TransfersToolbarButton(viewModel: viewModel)
                 .padding(.trailing, 4)

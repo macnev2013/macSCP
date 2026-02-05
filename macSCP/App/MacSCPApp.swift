@@ -54,6 +54,15 @@ struct MacSCPApp: App {
         .modelContainer(container.modelContainer)
         .defaultSize(WindowSize.fileInfo)
         .windowResizability(.contentSize)
+
+        // Terminal Window
+        WindowGroup(id: WindowID.terminal, for: String.self) { $windowId in
+            if let windowId = windowId {
+                TerminalWindow(windowId: windowId)
+            }
+        }
+        .modelContainer(container.modelContainer)
+        .defaultSize(WindowSize.terminal)
     }
 
     // MARK: - Commands

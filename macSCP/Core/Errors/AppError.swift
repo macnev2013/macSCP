@@ -47,6 +47,11 @@ enum AppError: LocalizedError, Sendable {
     case fileReadFailed
     case fileWriteFailed
 
+    // Terminal errors
+    case terminalConnectionFailed(String)
+    case terminalConnectionLost
+    case terminalPTYFailed
+
     // General errors
     case unknown(String)
     case notConnected
@@ -113,6 +118,13 @@ enum AppError: LocalizedError, Sendable {
         case .fileWriteFailed:
             return "Failed to write file"
 
+        case .terminalConnectionFailed(let message):
+            return "Terminal connection failed: \(message)"
+        case .terminalConnectionLost:
+            return "Terminal connection was lost"
+        case .terminalPTYFailed:
+            return "Failed to allocate pseudo-terminal"
+
         case .unknown(let message):
             return message
         case .notConnected:
@@ -134,6 +146,10 @@ enum AppError: LocalizedError, Sendable {
             return "Please check your bucket name and region."
         case .invalidS3Credentials:
             return "Please verify your Access Key ID and Secret Access Key."
+        case .terminalConnectionFailed, .terminalConnectionLost:
+            return "Please check your network connection and try reconnecting."
+        case .terminalPTYFailed:
+            return "The server may not support interactive terminals. Please try again."
         default:
             return nil
         }

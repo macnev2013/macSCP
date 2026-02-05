@@ -77,6 +77,9 @@ struct ConnectionGridView: View {
                         onConnect: {
                             viewModel.connectToServer(connection)
                         },
+                        onOpenTerminal: {
+                            viewModel.requestTerminal(for: connection)
+                        },
                         onEdit: {
                             viewModel.editConnection(connection)
                         },

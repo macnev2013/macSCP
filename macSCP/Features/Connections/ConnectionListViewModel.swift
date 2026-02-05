@@ -40,6 +40,7 @@ final class ConnectionListViewModel {
 
     // Window opening state
     var pendingWindowId: String?
+    var pendingTerminalWindowId: String?
 
     // MARK: - Dependencies
     private let connectionRepository: ConnectionRepositoryProtocol
@@ -339,6 +340,59 @@ final class ConnectionListViewModel {
 
     func clearPendingWindow() {
         pendingWindowId = nil
+    }
+
+    func clearPendingTerminalWindow() {
+        pendingTerminalWindowId = nil
+    }
+
+    // MARK: - Terminal Operations
+
+    func openTerminal(for connection: Connection, password: String) {
+        // Only allow terminal for SFTP connections
+        guard connection.connectionType == .sftp else {
+            logWarning("Terminal only supported for SFTP connections", category: .ui)
+            return
+        }
+
+        let data = TerminalWindowData(
+            connectionId: connection.id,
+            connectionName: connection.name,
+            host: connection.host,
+            port: connection.port,
+            username: connection.username,
+            password: password,
+            authMethod: connection.authMethod,
+            privateKeyPath: connection.privateKeyPath
+        )
+
+        let windowId = windowManager.storeTerminalData(data)
+        logInfo("Stored terminal window data with ID: \(windowId)", category: .ui)
+        pendingTerminalWindowId = windowId
+    }
+
+    func requestTerminal(for connection: Connection) {
+        connectionToConnect = connection
+
+        if connection.connectionType == .s3 {
+            logWarning("Terminal not supported for S3 connections", category: .ui)
+            return
+        }
+
+        // Check for saved password
+        if let savedPassword = keychainService.getPassword(for: connection.id) {
+            openTerminal(for: connection, password: savedPassword)
+        } else {
+            // Need to prompt for password
+            isShowingPasswordPrompt = true
+        }
+    }
+
+    func openTerminalWithPassword(_ password: String) {
+        guard let connection = connectionToConnect else { return }
+        openTerminal(for: connection, password: password)
+        isShowingPasswordPrompt = false
+        connectionToConnect = nil
     }
 
     // MARK: - Edit Actions

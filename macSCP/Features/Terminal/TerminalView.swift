@@ -39,7 +39,6 @@ struct TerminalContentView: View {
     @ViewBuilder
     private var terminalToolbar: some View {
         HStack(spacing: 8) {
-            // Connection status with reconnect icon
             Circle()
                 .fill(statusColor)
                 .frame(width: 8, height: 8)
@@ -48,7 +47,6 @@ struct TerminalContentView: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
 
-            // Reconnect icon button
             Button {
                 Task {
                     await viewModel.reconnect()
@@ -83,9 +81,7 @@ struct TerminalContentView: View {
             LoadingView(message: "Connecting...")
 
         case .connected:
-            SwiftTermWrapper(viewModel: viewModel)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
+            SwiftTermView(viewModel: viewModel)
 
         case .error(let error):
             ErrorView(error: error) {
@@ -121,122 +117,70 @@ struct TerminalContentView: View {
     }
 }
 
-// MARK: - SwiftTerm Wrapper
+// MARK: - SwiftTerm View (Minimal Wrapper)
 
-struct SwiftTermWrapper: NSViewRepresentable {
+struct SwiftTermView: NSViewRepresentable {
     @Bindable var viewModel: TerminalViewModel
 
-    func makeNSView(context: Context) -> NSView {
-        // Create container view with padding
-        let containerView = NSView()
-        containerView.wantsLayer = true
-        containerView.layer?.backgroundColor = NSColor(red: 0.1, green: 0.1, blue: 0.12, alpha: 1.0).cgColor
-
-        // Create terminal view
-        let terminal = SwiftTerm.TerminalView(frame: containerView.bounds)
+    func makeNSView(context: Context) -> TerminalView {
+        let terminal = TerminalView()
         terminal.terminalDelegate = context.coordinator
-        terminal.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
-        terminal.translatesAutoresizingMaskIntoConstraints = false
-
-        // Configure terminal appearance - dark theme
-        terminal.nativeForegroundColor = .white
-        terminal.nativeBackgroundColor = NSColor(red: 0.1, green: 0.1, blue: 0.12, alpha: 1.0)
-
-        // Add terminal to container with padding constraints
-        let padding: CGFloat = 8
-        containerView.addSubview(terminal)
-        NSLayoutConstraint.activate([
-            terminal.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
-            terminal.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -padding),
-            terminal.topAnchor.constraint(equalTo: containerView.topAnchor, constant: padding),
-            terminal.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -padding)
-        ])
-
-        // Set up output callback from ViewModel
         context.coordinator.terminal = terminal
+
+        // Set up output callback
         viewModel.onOutput = { [weak coordinator = context.coordinator] data in
             DispatchQueue.main.async {
-                coordinator?.receiveOutput(data)
+                coordinator?.terminal?.feed(byteArray: ArraySlice([UInt8](data)))
             }
         }
 
-        // Request focus for keyboard input after view is added to window
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            if let window = terminal.window {
-                window.makeFirstResponder(terminal)
-            }
+        // Focus after appearing
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            terminal.window?.makeFirstResponder(terminal)
         }
 
-        return containerView
+        return terminal
     }
 
-    func updateNSView(_ nsView: NSView, context: Context) {
-        // Find the terminal view inside the container
-        guard let terminal = nsView.subviews.first as? SwiftTerm.TerminalView else { return }
-
-        // Ensure coordinator has reference to terminal
+    func updateNSView(_ terminal: TerminalView, context: Context) {
         context.coordinator.terminal = terminal
-
-        // Ensure terminal has keyboard focus when view updates
-        if let window = terminal.window, window.firstResponder != terminal {
-            window.makeFirstResponder(terminal)
-        }
     }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(viewModel: viewModel)
     }
 
-    class Coordinator: NSObject, SwiftTerm.TerminalViewDelegate {
+    class Coordinator: NSObject, TerminalViewDelegate {
         var viewModel: TerminalViewModel
-        weak var terminal: SwiftTerm.TerminalView?
+        weak var terminal: TerminalView?
 
         init(viewModel: TerminalViewModel) {
             self.viewModel = viewModel
         }
 
-        // MARK: - TerminalViewDelegate
-
-        func sizeChanged(source: SwiftTerm.TerminalView, newCols: Int, newRows: Int) {
-            // Only send valid terminal sizes
-            guard newCols > 0 && newRows > 0 else { return }
+        func sizeChanged(source: TerminalView, newCols: Int, newRows: Int) {
+            guard newCols > 0, newRows > 0 else { return }
             viewModel.resize(columns: newCols, rows: newRows)
         }
 
-        func setTerminalTitle(source: SwiftTerm.TerminalView, title: String) {
-            // Title changes can be ignored or used for window title
-        }
+        func setTerminalTitle(source: TerminalView, title: String) {}
 
-        func hostCurrentDirectoryUpdate(source: SwiftTerm.TerminalView, directory: String?) {
-            // Directory updates from the shell
-        }
+        func hostCurrentDirectoryUpdate(source: TerminalView, directory: String?) {}
 
-        func send(source: SwiftTerm.TerminalView, data: ArraySlice<UInt8>) {
+        func send(source: TerminalView, data: ArraySlice<UInt8>) {
             viewModel.sendInput(Data(data))
         }
 
-        func scrolled(source: SwiftTerm.TerminalView, position: Double) {
-            // Scroll position changed
-        }
+        func scrolled(source: TerminalView, position: Double) {}
 
-        func clipboardCopy(source: SwiftTerm.TerminalView, content: Data) {
+        func clipboardCopy(source: TerminalView, content: Data) {
             if let string = String(data: content, encoding: .utf8) {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(string, forType: .string)
             }
         }
 
-        func rangeChanged(source: SwiftTerm.TerminalView, startY: Int, endY: Int) {
-            // Range changed - used for selection
-        }
-
-        // MARK: - Output Handling
-
-        func receiveOutput(_ data: Data) {
-            guard let terminal = terminal else { return }
-            terminal.feed(byteArray: ArraySlice([UInt8](data)))
-            terminal.setNeedsDisplay(terminal.bounds)
-        }
+        func rangeChanged(source: TerminalView, startY: Int, endY: Int) {}
     }
 }
 

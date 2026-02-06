@@ -19,7 +19,7 @@ env:
 jobs:
   build:
     name: Build and Create DMG
-    runs-on: macos-14  # Apple Silicon runner
+    runs-on: macos-26
 
     steps:
       - name: Checkout repository

@@ -15,6 +15,7 @@ struct TransferProgress: Identifiable, Sendable {
     let remotePath: String
     let totalBytes: Int64
     let startTime: Date
+    let transferType: TransferType
 
     /// Number of bytes transferred so far
     var bytesTransferred: Int64
@@ -33,7 +34,8 @@ struct TransferProgress: Identifiable, Sendable {
         bytesTransferred: Int64 = 0,
         totalBytes: Int64,
         status: TransferStatus = .inProgress,
-        startTime: Date = Date()
+        startTime: Date = Date(),
+        transferType: TransferType = .upload
     ) {
         self.id = id
         self.fileName = fileName
@@ -43,6 +45,7 @@ struct TransferProgress: Identifiable, Sendable {
         self.totalBytes = totalBytes
         self.status = status
         self.startTime = startTime
+        self.transferType = transferType
     }
 
     /// Progress as a fraction (0.0 to 1.0)

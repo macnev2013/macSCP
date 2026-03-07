@@ -62,6 +62,9 @@ protocol S3SessionProtocol: Sendable {
     /// Download an object to local storage
     func downloadFile(from remotePath: String, to localURL: URL) async throws
 
+    /// Download an object to local storage with progress reporting
+    func downloadFile(from remotePath: String, to localURL: URL, progress: TransferProgressHandler?) async throws
+
     /// Upload a file to S3
     func uploadFile(from localURL: URL, to remotePath: String) async throws
 

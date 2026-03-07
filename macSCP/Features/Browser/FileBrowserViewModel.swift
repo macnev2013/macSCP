@@ -443,12 +443,11 @@ final class FileBrowserViewModel {
         guard panel.runModal() == .OK, let url = panel.url else { return }
 
         do {
-            try await fileRepository.download(remotePath: file.path, to: url)
-            AnalyticsService.trackFileDownloaded(protocol: .init(from: connection.connectionType), fileCount: 1, totalBytes: file.size)
-            logInfo("Downloaded: \(file.name)", category: connection.connectionType == .s3 ? .s3 : .sftp)
+            try await downloadFileToURL(file, destinationURL: url)
         } catch {
-            logError("Download failed: \(error)", category: .sftp)
-            self.error = AppError.from(error)
+            // Error is already recorded in recentTransfers and surfaced via self.error
+            // inside downloadURL. The NSSavePanel context means the user initiated
+            // this directly, so we don't re-throw to callers.
         }
     }
 
@@ -569,6 +568,103 @@ final class FileBrowserViewModel {
         await loadFiles()
     }
 
+    /// Core download method that handles a single file with progress tracking
+    private func downloadURL(_ file: RemoteFile, destinationURL: URL) async throws {
+        // Show the transfers popover when starting a download
+        isShowingTransfersPopover = true
+
+        let fileSize = file.size
+        let transferId = UUID()
+        let transfer = TransferProgress(
+            id: transferId,
+            fileName: file.name,
+            localURL: destinationURL,
+            remotePath: file.path,
+            bytesTransferred: 0,
+            totalBytes: fileSize,
+            status: .inProgress,
+            transferType: .download
+        )
+        activeTransfers[transferId] = transfer
+
+        let downloadTask = Task { [weak self] in
+            guard let self = self else { return }
+
+            do {
+                try Task.checkCancellation()
+
+                try await self.fileRepository.download(
+                    remotePath: file.path,
+                    to: destinationURL
+                ) { [weak self] bytesTransferred in
+                    Task { @MainActor in
+                        guard self?.activeTransfers[transferId] != nil else { return }
+                        self?.activeTransfers[transferId]?.bytesTransferred = bytesTransferred
+                    }
+                }
+
+                try Task.checkCancellation()
+
+                await MainActor.run {
+                    if var completedTransfer = self.activeTransfers.removeValue(forKey: transferId) {
+                        completedTransfer.status = .completed
+                        completedTransfer.bytesTransferred = fileSize
+                        self.recentTransfers.insert(completedTransfer, at: 0)
+                        if self.recentTransfers.count > 10 {
+                            self.recentTransfers = Array(self.recentTransfers.prefix(10))
+                        }
+                    }
+                    self.transferTasks.removeValue(forKey: transferId)
+                }
+
+                AnalyticsService.trackFileDownloaded(protocol: .init(from: self.connection.connectionType), fileCount: 1, totalBytes: fileSize)
+                logInfo("Downloaded: \(file.name)", category: self.connection.connectionType == .s3 ? .s3 : .sftp)
+
+            } catch {
+                let isCancellation = error is CancellationError ||
+                    Task.isCancelled ||
+                    String(describing: error).contains("CancellationError")
+
+                if isCancellation {
+                    await MainActor.run {
+                        if var cancelledTransfer = self.activeTransfers.removeValue(forKey: transferId) {
+                            cancelledTransfer.status = .cancelled
+                            self.recentTransfers.insert(cancelledTransfer, at: 0)
+                        }
+                        self.transferTasks.removeValue(forKey: transferId)
+                    }
+                    logInfo("Download cancelled: \(file.name)", category: self.connection.connectionType == .s3 ? .s3 : .sftp)
+                } else {
+                    await MainActor.run {
+                        if var failedTransfer = self.activeTransfers.removeValue(forKey: transferId) {
+                            failedTransfer.status = .failed
+                            failedTransfer.error = error.localizedDescription
+                            self.recentTransfers.insert(failedTransfer, at: 0)
+                        }
+                        self.transferTasks.removeValue(forKey: transferId)
+                        self.error = AppError.from(error)
+                    }
+                    logError("Download failed: \(error)", category: self.connection.connectionType == .s3 ? .s3 : .sftp)
+                }
+            }
+        }
+
+        transferTasks[transferId] = downloadTask
+
+        // Propagate errors thrown during download
+        try await withTaskCancellationHandler {
+            await downloadTask.value
+            // Re-throw any error recorded on the transfer
+            if let failedTransfer = recentTransfers.first(where: { $0.id == transferId }),
+               failedTransfer.status == .failed,
+               let errorMsg = failedTransfer.error {
+                throw AppError.unknown(errorMsg)
+            }
+        } onCancel: {
+            downloadTask.cancel()
+        }
+    }
+
     /// Cancels an active transfer
     func cancelTransfer(_ transfer: TransferProgress) {
         guard transfer.isInProgress else { return }
@@ -600,11 +696,10 @@ final class FileBrowserViewModel {
 
     // MARK: - Drag and Drop
 
-    /// Downloads a file to a specific URL (used for drag-out file promises)
+    /// Downloads a file to a specific URL (used for drag-out file promises and
+    /// right-click downloads). Progress is tracked in the Transfers popover.
     func downloadFileToURL(_ file: RemoteFile, destinationURL: URL) async throws {
-        try await fileRepository.download(remotePath: file.path, to: destinationURL)
-        AnalyticsService.trackFileDownloaded(protocol: .init(from: connection.connectionType), fileCount: 1, totalBytes: file.size)
-        logInfo("Downloaded via drag: \(file.name)", category: connection.connectionType == .s3 ? .s3 : .sftp)
+        try await downloadURL(file, destinationURL: destinationURL)
     }
 
     /// Uploads files dropped from Finder into the current directory

@@ -342,6 +342,10 @@ actor SFTPSession: SFTPSessionProtocol {
     }
 
     func downloadFile(from remotePath: String, to localURL: URL) async throws {
+        try await downloadFile(from: remotePath, to: localURL, progress: nil)
+    }
+
+    func downloadFile(from remotePath: String, to localURL: URL, progress: TransferProgressHandler?) async throws {
         guard let client = client else {
             throw AppError.notConnected
         }
@@ -352,6 +356,9 @@ actor SFTPSession: SFTPSessionProtocol {
                 let attributes = try await sftp.getAttributes(at: remotePath)
                 let fileSize = attributes.size ?? 0
                 let chunkSize = UInt64(FileOperationConstants.chunkSize)
+
+                // Report initial progress
+                progress?(0)
 
                 try await sftp.withFile(filePath: remotePath, flags: .read) { file in
                     // Create/truncate local file
@@ -368,6 +375,9 @@ actor SFTPSession: SFTPSessionProtocol {
 
                         try fileHandle.write(contentsOf: data)
                         offset += UInt64(data.count)
+
+                        // Report progress
+                        progress?(Int64(offset))
 
                         // Break if we didn't get any data (EOF)
                         if data.isEmpty {

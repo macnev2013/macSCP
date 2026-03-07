@@ -70,6 +70,9 @@ protocol SFTPSessionProtocol: Sendable {
     /// Download a file
     func downloadFile(from remotePath: String, to localURL: URL) async throws
 
+    /// Download a file with progress reporting
+    func downloadFile(from remotePath: String, to localURL: URL, progress: TransferProgressHandler?) async throws
+
     /// Upload a file
     func uploadFile(from localURL: URL, to remotePath: String) async throws
 

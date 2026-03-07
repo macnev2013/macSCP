@@ -159,7 +159,7 @@ struct TransferItemView: View {
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
                 } else if transfer.status == .failed {
-                    Text(transfer.error ?? "Upload failed")
+                    Text(transfer.error ?? (transfer.transferType == .download ? "Download failed" : "Upload failed"))
                         .font(.system(size: 10))
                         .foregroundStyle(.red)
                         .lineLimit(1)
@@ -178,7 +178,7 @@ struct TransferItemView: View {
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
-                .help("Cancel upload")
+                .help(transfer.transferType == .download ? "Cancel download" : "Cancel upload")
             }
 
             // Remove button (shown on hover for completed/failed/cancelled)
@@ -206,8 +206,8 @@ struct TransferItemView: View {
                 .fill(statusBackgroundColor)
 
             if transfer.isInProgress {
-                // Animated upload icon
-                Image(systemName: "arrow.up")
+                // Animated transfer icon
+                Image(systemName: transfer.transferType == .download ? "arrow.down" : "arrow.up")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.white)
             } else if transfer.isComplete {

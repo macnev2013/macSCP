@@ -58,6 +58,10 @@ final class S3FileRepository: FileRepositoryProtocol, @unchecked Sendable {
         try await s3Session.downloadFile(from: remotePath, to: localURL)
     }
 
+    func download(remotePath: String, to localURL: URL, progress: TransferProgressHandler?) async throws {
+        try await s3Session.downloadFile(from: remotePath, to: localURL, progress: progress)
+    }
+
     func upload(localURL: URL, to remotePath: String) async throws {
         try await s3Session.uploadFile(from: localURL, to: remotePath)
     }

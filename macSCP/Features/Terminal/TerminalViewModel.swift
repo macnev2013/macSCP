@@ -186,11 +186,16 @@ final class TerminalViewModel {
                 }
             }
 
-            // Stream ended - connection may have been lost
+            // Stream ended - check if session ended gracefully or unexpectedly
+            let graceful = await self.session.sessionEndedGracefully
             await MainActor.run {
                 if self.isConnected {
                     self.isConnected = false
-                    self.state = .error(.terminalConnectionLost)
+                    if graceful {
+                        self.state = .disconnected
+                    } else {
+                        self.state = .error(.terminalConnectionLost)
+                    }
                 }
             }
         }

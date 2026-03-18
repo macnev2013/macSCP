@@ -16,6 +16,7 @@ actor TerminalSession: TerminalSessionProtocol {
     private var client: SSHClient?
     private var eventLoopGroup: MultiThreadedEventLoopGroup?
     private(set) var isConnected = false
+    private(set) var sessionEndedGracefully = false
 
     // PTY state
     private var ptyTask: Task<Void, Error>?
@@ -53,6 +54,7 @@ actor TerminalSession: TerminalSessionProtocol {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         eventLoopGroup = group
         currentSize = terminalSize
+        sessionEndedGracefully = false
 
         do {
             let normalizedHost = (host.lowercased() == "localhost") ? "127.0.0.1" : host
@@ -102,6 +104,7 @@ actor TerminalSession: TerminalSessionProtocol {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         eventLoopGroup = group
         currentSize = terminalSize
+        sessionEndedGracefully = false
 
         do {
             let normalizedHost = (host.lowercased() == "localhost") ? "127.0.0.1" : host
@@ -199,6 +202,12 @@ actor TerminalSession: TerminalSessionProtocol {
                         }
                     }
                 }
+
+                // PTY stream ended normally (e.g. user exited shell with CTRL-D/exit)
+                if !Task.isCancelled {
+                    logInfo("Terminal session ended gracefully", category: .network)
+                    await self.handleGracefulSessionEnd()
+                }
             } catch {
                 // Only log as error if not cancelled (intentional disconnect)
                 if !Task.isCancelled {
@@ -215,6 +224,12 @@ actor TerminalSession: TerminalSessionProtocol {
 
     private func sendOutput(_ data: Data) {
         outputContinuation?.yield(data)
+    }
+
+    private func handleGracefulSessionEnd() {
+        isConnected = false
+        sessionEndedGracefully = true
+        outputContinuation?.finish()
     }
 
     private func handlePTYError(_ error: Error) {

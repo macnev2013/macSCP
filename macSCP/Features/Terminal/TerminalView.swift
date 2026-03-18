@@ -15,6 +15,7 @@ struct TerminalContentView: View {
     @Bindable var viewModel: TerminalViewModel
 
     @State private var showConnectionLostBanner = false
+    @State private var showSessionEndedBanner = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -57,14 +58,23 @@ struct TerminalContentView: View {
             if case .connected = oldState, case .error = newState {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     showConnectionLostBanner = true
+                    showSessionEndedBanner = false
+                }
+            } else if case .connected = oldState, case .disconnected = newState {
+                // Graceful session end (e.g. CTRL-D / exit)
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    showSessionEndedBanner = true
+                    showConnectionLostBanner = false
                 }
             } else if case .connected = newState {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     showConnectionLostBanner = false
+                    showSessionEndedBanner = false
                 }
             } else if case .connecting = newState {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     showConnectionLostBanner = false
+                    showSessionEndedBanner = false
                 }
             }
         }
@@ -86,7 +96,7 @@ struct TerminalContentView: View {
             Spacer()
 
             // Terminal dimensions
-            if viewModel.isConnected || showConnectionLostBanner {
+            if viewModel.isConnected || showConnectionLostBanner || showSessionEndedBanner {
                 Text(viewModel.terminalSizeText)
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundStyle(.tertiary)
@@ -101,20 +111,31 @@ struct TerminalContentView: View {
     private var terminalContent: some View {
         switch viewModel.state {
         case .disconnected:
-            ContentUnavailableView {
-                Label("Disconnected", systemImage: "terminal")
-            } description: {
-                Text("The terminal session is not connected.")
-            } actions: {
-                Button {
-                    Task {
-                        await viewModel.reconnect()
-                    }
-                } label: {
-                    Text("Connect")
+            if showSessionEndedBanner {
+                // Session ended gracefully — preserve terminal content with overlay
+                ZStack {
+                    SwiftTermView(viewModel: viewModel)
+                        .allowsHitTesting(false)
+                        .opacity(0.4)
+
+                    sessionEndedBanner
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.regular)
+            } else {
+                ContentUnavailableView {
+                    Label("Disconnected", systemImage: "terminal")
+                } description: {
+                    Text("The terminal session is not connected.")
+                } actions: {
+                    Button {
+                        Task {
+                            await viewModel.reconnect()
+                        }
+                    } label: {
+                        Text("Connect")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.regular)
+                }
             }
 
         case .connecting:
@@ -153,6 +174,40 @@ struct TerminalContentView: View {
                     .controlSize(.regular)
                 }
             }
+        }
+    }
+
+    private var sessionEndedBanner: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "terminal")
+                .font(.system(size: 28, weight: .medium))
+                .foregroundStyle(.secondary)
+
+            Text("Session Ended")
+                .font(.system(size: 15, weight: .semibold))
+
+            Text("The remote shell has exited.")
+                .font(.system(size: 12))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            Button {
+                Task {
+                    showSessionEndedBanner = false
+                    await viewModel.reconnect()
+                }
+            } label: {
+                Label("Reconnect", systemImage: "arrow.clockwise")
+                    .font(.system(size: 13, weight: .medium))
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+        }
+        .padding(32)
+        .background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 5)
         }
     }
 
@@ -198,7 +253,9 @@ struct TerminalContentView: View {
             return .green
         case .connecting:
             return .orange
-        case .disconnected, .error:
+        case .disconnected:
+            return showSessionEndedBanner ? .gray : .red
+        case .error:
             return .red
         }
     }
@@ -211,7 +268,7 @@ struct TerminalContentView: View {
         case .connecting:
             return "Connecting..."
         case .disconnected:
-            return "Disconnected"
+            return showSessionEndedBanner ? "Session Ended" : "Disconnected"
         case .error:
             return "Connection Error"
         }
@@ -225,7 +282,7 @@ struct TerminalContentView: View {
         case .connecting:
             return "Connecting..."
         case .disconnected:
-            return "Disconnected"
+            return showSessionEndedBanner ? "Session Ended" : "Disconnected"
         case .error:
             return "Connection Lost"
         }

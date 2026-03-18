@@ -69,6 +69,10 @@ protocol TerminalSessionProtocol: Sendable {
     ///   - rows: New height in characters
     func resize(columns: Int, rows: Int) async throws
 
+    /// Whether the session ended gracefully (e.g. user exited shell with CTRL-D)
+    /// rather than due to a network error or unexpected disconnection
+    var sessionEndedGracefully: Bool { get async }
+
     /// Disconnect from the server
     func disconnect() async
 }

@@ -20,14 +20,36 @@
 <p align="center">
   <a href="https://github.com/macnev2013/macSCP/releases"><img src="https://img.shields.io/github/v/release/macnev2013/macSCP" alt="Release"/></a>
   <a href="https://github.com/macnev2013/macSCP/releases"><img src="https://img.shields.io/github/downloads/macnev2013/macSCP/total" alt="Downloads"/></a>
+  <img src="https://img.shields.io/badge/macOS-15.0%2B-blue?logo=apple" alt="macOS 15.0+"/>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-CC0--1.0-green" alt="License CC0"/></a>
   <a href="https://github.com/macnev2013/macSCP/stargazers"><img src="https://img.shields.io/github/stars/macnev2013/macSCP?style=social" alt="Stars"/></a>
 </p>
+
+---
+
+<p align="center">
+  <img src="screens/screen-1.png" alt="macSCP Connection Manager" width="800"/>
+</p>
+<p align="center"><em>Manage SFTP servers, S3 buckets, and SSH terminals from one native macOS app.</em></p>
 
 ---
 
 ## Overview
 
 macSCP is a modern, native macOS application built with SwiftUI that provides seamless file management for SFTP servers, Amazon S3 storage, and integrated SSH terminal access. With its intuitive interface and powerful features, macSCP makes managing remote servers and cloud storage as easy as working with local files.
+
+## How macSCP Compares
+
+| Feature | macSCP | Cyberduck | Transmit | FileZilla |
+|---------|--------|-----------|----------|-----------|
+| Native SwiftUI | Yes | No (Java) | Yes (AppKit) | No (wxWidgets) |
+| SFTP | Yes | Yes | Yes | Yes |
+| S3 / S3-compatible | Yes | Yes | Yes | Pro only |
+| Integrated SSH terminal | Yes | No | No | No |
+| Built-in file editor | Yes | Yes | Yes | No |
+| macOS Keychain | Yes | Yes | Yes | No |
+| Free & open source | Yes | Yes (GPL) | No ($45) | Yes (GPL) |
+| Dark mode | Yes | Yes | Yes | No |
 
 ## Features
 
@@ -103,21 +125,15 @@ macSCP is a modern, native macOS application built with SwiftUI that provides se
 
 ## Screenshots
 
-### Connection Manager
-![Main Interface](screens/screen-1.png)
-*Manage all your SSH connections with folders, tags, and custom icons*
+| Connection Manager | New Connection |
+|:--:|:--:|
+| ![Connection Manager](screens/screen-1.png) | ![New Connection](screens/screen-2.png) |
+| *Organize servers with folders, tags, and icons* | *Password or SSH key authentication* |
 
-### New Connection Setup
-![New Connection](screens/screen-2.png)
-*Easy-to-use connection setup with password or SSH key authentication*
-
-### Remote File Browser
-![File Browser](screens/screen-3.png)
-*Browse remote files with a native macOS interface, complete with context menus and file operations*
-
-### Built-in File Editor
-![File Editor](screens/screen-4.png)
-*Edit remote files directly with syntax highlighting and search functionality*
+| Remote File Browser | Built-in Editor |
+|:--:|:--:|
+| ![File Browser](screens/screen-3.png) | ![File Editor](screens/screen-4.png) |
+| *Finder-like interface with context menus* | *Edit remote files with syntax highlighting* |
 
 ## Installation
 
@@ -128,7 +144,7 @@ macSCP is a modern, native macOS application built with SwiftUI that provides se
 4. Launch macSCP from Applications
 
 ### Requirements
-- macOS 13.0 (Ventura) or later
+- macOS 15.0 (Sequoia) or later
 - For SFTP: SSH access to remote servers
 - For S3: AWS access key and secret key (or S3-compatible credentials)
 
@@ -136,8 +152,8 @@ macSCP is a modern, native macOS application built with SwiftUI that provides se
 
 ### Prerequisites
 
-- Xcode 15.0 or later
-- macOS 13.0 SDK or later
+- Xcode 16.0 or later
+- macOS 15.0 SDK or later
 - Swift 5.9 or later
 
 ### Dependencies
@@ -281,12 +297,12 @@ Future features under consideration:
 
 ### General
 
-- **App won't launch**: Check macOS version requirements (13.0+)
+- **App won't launch**: Check macOS version requirements (15.0+)
 - **Crashes**: Check Console.app for crash logs and report issues
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under CC0 1.0 Universal - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 

@@ -319,6 +319,10 @@ final class ConnectionListViewModel {
                 if let savedPassword = keychainService.getPassword(for: connection.id) {
                     logInfo("Found saved password, opening browser", category: .ui)
                     openFileBrowser(for: connection, password: savedPassword)
+                } else if connection.authMethod == .privateKey {
+                    // Key-based auth doesn't require a password — connect directly
+                    logInfo("Private key auth, connecting without password", category: .ui)
+                    openFileBrowser(for: connection, password: "")
                 } else {
                     logInfo("No saved password, showing prompt", category: .ui)
                     isShowingPasswordPrompt = true
@@ -415,6 +419,10 @@ final class ConnectionListViewModel {
             // Check for saved password
             if let savedPassword = keychainService.getPassword(for: connection.id) {
                 openTerminal(for: connection, password: savedPassword)
+            } else if connection.authMethod == .privateKey {
+                // Key-based auth doesn't require a password — connect directly
+                logInfo("Private key auth, opening terminal without password", category: .ui)
+                openTerminal(for: connection, password: "")
             } else {
                 // Need to prompt for password
                 isShowingPasswordPrompt = true

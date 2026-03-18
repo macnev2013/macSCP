@@ -210,13 +210,13 @@ struct ConnectionFormSheet: View {
                     onCancel()
                 }
                 .keyboardShortcut(.cancelAction)
-                .buttonStyle(.glass)
+                .buttonStyle(.bordered)
 
                 Button(mode.saveButtonTitle) {
                     save()
                 }
                 .keyboardShortcut(.defaultAction)
-                .buttonStyle(.glassProminent)
+                .buttonStyle(.borderedProminent)
                 .disabled(!isValid)
             }
             .padding()

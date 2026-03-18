@@ -3,6 +3,7 @@
 //  macSCP
 //
 
+#if !MAS_BUILD
 import Combine
 import Foundation
 import Sparkle
@@ -26,3 +27,4 @@ final class CheckForUpdatesViewModel: ObservableObject {
         logInfo("Manual update check triggered", category: .app)
     }
 }
+#endif

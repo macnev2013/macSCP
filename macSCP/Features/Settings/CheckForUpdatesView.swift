@@ -3,6 +3,7 @@
 //  macSCP
 //
 
+#if !MAS_BUILD
 import SwiftUI
 
 struct CheckForUpdatesView: View {
@@ -13,3 +14,4 @@ struct CheckForUpdatesView: View {
             .disabled(!viewModel.canCheckForUpdates)
     }
 }
+#endif

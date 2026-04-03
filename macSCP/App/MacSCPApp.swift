@@ -7,19 +7,24 @@
 
 import SwiftUI
 import SwiftData
+#if !MAS_BUILD
 import Sparkle
+#endif
 
 @main
 struct MacSCPApp: App {
     @StateObject private var container = DependencyContainer.shared
 
+    #if !MAS_BUILD
     private let updaterController: SPUStandardUpdaterController
     @StateObject private var checkForUpdatesViewModel: CheckForUpdatesViewModel
+    #endif
 
     init() {
         AnalyticsService.initialize()
         AppLockManager.shared.lockIfNeeded()
 
+        #if !MAS_BUILD
         let controller = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: nil,
@@ -29,6 +34,7 @@ struct MacSCPApp: App {
         self._checkForUpdatesViewModel = StateObject(
             wrappedValue: CheckForUpdatesViewModel(updater: controller.updater)
         )
+        #endif
     }
 
     var body: some Scene {
@@ -94,9 +100,11 @@ struct MacSCPApp: App {
     // MARK: - Commands
     @CommandsBuilder
     private var appCommands: some Commands {
+        #if !MAS_BUILD
         CommandGroup(after: .appInfo) {
             CheckForUpdatesView(viewModel: checkForUpdatesViewModel)
         }
+        #endif
 
         CommandGroup(replacing: .newItem) {
             Button("New Connection") {
